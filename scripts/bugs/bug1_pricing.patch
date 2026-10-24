@@ -1,0 +1,5 @@
+--- a/pricing.py
++++ b/pricing.py
+@@ -5,1 +5,1 @@
+-    if discount < 0 or discount > 1:
++    if discount <= 0 or discount > 1:

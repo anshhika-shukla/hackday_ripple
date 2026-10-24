@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ripple"
+version = "0.1.0"
+description = "Run the tests that matter. Offline change-impact and test-selection agent"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "RIPPLE Team" }
+]
+dependencies = [
+    "networkx>=3.0",
+    "pydantic>=2.0.0",
+    "ollama>=0.3.0",
+    "pytest>=7.0.0",
+    "pytest-xdist>=3.0.0",
+    "coverage>=7.0.0",
+    "rich>=13.0.0",
+]
+
+[project.scripts]
+ripple = "ripple.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "live: marks tests that require a running local Ollama instance (deselect with '-m \"not live\"')",
+]

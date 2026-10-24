@@ -1,0 +1,375 @@
+{
+  "target_repo": "targets/click",
+  "total_mutants": 30,
+  "killed_mutants": 27,
+  "full_suite_duration_s": 14.2,
+  "mutants": [
+    {
+      "mutant_id": 1,
+      "file": "pricing.py",
+      "line": 8,
+      "operator": "CMP_FLIP",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -8,1 +8,1 @@\n-    if discount < 0 or discount > 1:\n+    if discount <= 0 or discount > 1:\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_pricing.py::test_apply_discount"],
+      "duration_s": 0.45,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 2,
+      "file": "pricing.py",
+      "line": 9,
+      "operator": "ARITH",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -9,1 +9,1 @@\n-    return price * (1.0 - discount)\n+    return price * (1.0 + discount)\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_pricing.py::test_apply_discount",
+        "tests/test_pricing.py::test_get_final_price",
+        "tests/test_cart.py::test_cart_total",
+        "tests/test_checkout.py::test_checkout_process"
+      ],
+      "duration_s": 0.48,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 3,
+      "file": "pricing.py",
+      "line": 15,
+      "operator": "ARITH",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -15,1 +15,1 @@\n-    return price * tax_rate\n+    return price / tax_rate\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_pricing.py::test_calculate_tax",
+        "tests/test_pricing.py::test_get_final_price",
+        "tests/test_checkout.py::test_checkout_process"
+      ],
+      "duration_s": 0.51,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 4,
+      "file": "cart.py",
+      "line": 17,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -17,1 +17,1 @@\n-    return subtotal\n+    return None\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_total",
+        "tests/test_checkout.py::test_checkout_process"
+      ],
+      "duration_s": 0.42,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 5,
+      "file": "inventory.py",
+      "line": 8,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -8,1 +8,1 @@\n-    return _STOCK.get(item_id, 0)\n+    return _STOCK.get(item_id, 1)\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_inventory.py::test_check_stock"
+      ],
+      "duration_s": 0.39,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 6,
+      "file": "checkout.py",
+      "line": 12,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/checkout.py\n+++ b/checkout.py\n@@ -12,1 +12,1 @@\n-    return receipt\n+    return None\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_checkout.py::test_checkout_process"
+      ],
+      "duration_s": 0.41,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 7,
+      "file": "pricing.py",
+      "line": 21,
+      "operator": "ARITH",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -21,1 +21,1 @@\n-    return discounted + tax\n+    return discounted - tax\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_pricing.py::test_get_final_price",
+        "tests/test_checkout.py::test_checkout_process"
+      ],
+      "duration_s": 0.44,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 8,
+      "file": "inventory.py",
+      "line": 15,
+      "operator": "CMP_FLIP",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -15,1 +15,1 @@\n-    if available >= quantity:\n+    if available > quantity:\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_inventory.py::test_reserve_item"
+      ],
+      "duration_s": 0.38,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 9,
+      "file": "cart.py",
+      "line": 13,
+      "operator": "BOOL_NEGATE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -13,1 +13,1 @@\n-    return True\n+    return False\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_add_item"
+      ],
+      "duration_s": 0.40,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 10,
+      "file": "utils.py",
+      "line": 5,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/utils.py\n+++ b/utils.py\n@@ -5,1 +5,1 @@\n-    return f'${amount:.2f}'\n+    return f'${amount:.3f}'\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_checkout.py::test_checkout_process"
+      ],
+      "duration_s": 0.41,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 11,
+      "file": "pricing.py",
+      "line": 7,
+      "operator": "CMP_FLIP",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -7,1 +7,1 @@\n-    if discount < 0:\n+    if discount <= 0:\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_pricing.py::test_apply_discount"],
+      "duration_s": 0.43,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 12,
+      "file": "pricing.py",
+      "line": 10,
+      "operator": "ARITH",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -10,1 +10,1 @@\n-    return price * (1.0 - discount)\n+    return price - discount\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_pricing.py::test_apply_discount",
+        "tests/test_pricing.py::test_get_final_price"
+      ],
+      "duration_s": 0.46,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 13,
+      "file": "cart.py",
+      "line": 19,
+      "operator": "ARITH",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -19,1 +19,1 @@\n-    return apply_discount(subtotal, discount)\n+    return apply_discount(subtotal, discount) + 5\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_cart.py::test_cart_total"],
+      "duration_s": 0.41,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 14,
+      "file": "inventory.py",
+      "line": 16,
+      "operator": "ARITH",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -16,1 +16,1 @@\n-    _STOCK[item_id] -= quantity\n+    _STOCK[item_id] += quantity\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_inventory.py::test_reserve_item"],
+      "duration_s": 0.39,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 15,
+      "file": "pricing.py",
+      "line": 17,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -17,1 +17,1 @@\n-    return discounted + tax\n+    return None\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_pricing.py::test_get_final_price",
+        "tests/test_checkout.py::test_checkout_process"
+      ],
+      "duration_s": 0.43,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 16,
+      "file": "pricing.py",
+      "line": 14,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -14,1 +14,1 @@\n-    return price * tax_rate\n+    return price * (tax_rate + 1)\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_pricing.py::test_calculate_tax"],
+      "duration_s": 0.42,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 17,
+      "file": "cart.py",
+      "line": 12,
+      "operator": "CMP_FLIP",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -12,1 +12,1 @@\n-    if reserve_item(item_id, quantity):\n+    if not reserve_item(item_id, quantity):\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_cart.py::test_cart_add_item"],
+      "duration_s": 0.40,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 18,
+      "file": "checkout.py",
+      "line": 9,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/checkout.py\n+++ b/checkout.py\n@@ -9,1 +9,1 @@\n-    total = cart.get_total(discount=0.0)\n+    total = cart.get_total(discount=0.5)\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_checkout.py::test_checkout_process"],
+      "duration_s": 0.45,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 19,
+      "file": "inventory.py",
+      "line": 7,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -7,1 +7,1 @@\n-    return _STOCK.get(item_id, 0)\n+    return None\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_inventory.py::test_check_stock",
+        "tests/test_inventory.py::test_reserve_item"
+      ],
+      "duration_s": 0.41,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 20,
+      "file": "pricing.py",
+      "line": 19,
+      "operator": "ARITH",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -19,1 +19,1 @@\n-    discounted = apply_discount(price, discount)\n+    discounted = apply_discount(price, discount) + 1.0\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_pricing.py::test_get_final_price"],
+      "duration_s": 0.44,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 21,
+      "file": "cart.py",
+      "line": 15,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -15,1 +15,1 @@\n-    subtotal = sum(item['price'] * item['qty'] for item in self.items)\n+    subtotal = sum(item['price'] * item['qty'] for item in self.items) + 1\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_cart.py::test_cart_total"],
+      "duration_s": 0.40,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 22,
+      "file": "inventory.py",
+      "line": 14,
+      "operator": "BOOL_NEGATE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -14,1 +14,1 @@\n-    return True\n+    return False\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_inventory.py::test_reserve_item"],
+      "duration_s": 0.39,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 23,
+      "file": "checkout.py",
+      "line": 10,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/checkout.py\n+++ b/checkout.py\n@@ -10,1 +10,1 @@\n-    final = get_final_price(total, discount=discount)\n+    final = None\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_checkout.py::test_checkout_process"],
+      "duration_s": 0.42,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 24,
+      "file": "pricing.py",
+      "line": 6,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -6,1 +6,1 @@\n-    return price * (1.0 - discount)\n+    return None\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_pricing.py::test_apply_discount",
+        "tests/test_pricing.py::test_get_final_price"
+      ],
+      "duration_s": 0.43,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 25,
+      "file": "utils.py",
+      "line": 4,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/utils.py\n+++ b/utils.py\n@@ -4,1 +4,1 @@\n-    return f'${amount:.2f}'\n+    return None\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_checkout.py::test_checkout_process"],
+      "duration_s": 0.41,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 26,
+      "file": "pricing.py",
+      "line": 16,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -16,1 +16,1 @@\n-    tax = calculate_tax(discounted, tax_rate)\n+    tax = calculate_tax(discounted, tax_rate) + 1.0\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_pricing.py::test_get_final_price"],
+      "duration_s": 0.44,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 27,
+      "file": "cart.py",
+      "line": 16,
+      "operator": "CMP_FLIP",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -16,1 +16,1 @@\n-    if discount > 0:\n+    if discount >= 0:\n",
+      "killed": true,
+      "failed_test_ids": ["tests/test_cart.py::test_cart_total"],
+      "duration_s": 0.41,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 28,
+      "file": "inventory.py",
+      "line": 5,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -5,1 +5,1 @@\n-_STOCK = {'item_1': 10, 'item_2': 5, 'item_3': 0}\n+_STOCK = {'item_1': 11, 'item_2': 5, 'item_3': 0}\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.38,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 29,
+      "file": "utils.py",
+      "line": 3,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/utils.py\n+++ b/utils.py\n@@ -3,1 +3,1 @@\n-def format_currency(amount: float) -> str:\n+def format_currency(amount: float = 0.0) -> str:\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.39,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 30,
+      "file": "cart.py",
+      "line": 8,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -8,1 +8,1 @@\n-def __init__(self):\n+def __init__(self, capacity=100):\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.40,
+      "timed_out": false
+    }
+  ]
+}

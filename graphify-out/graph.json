@@ -1,0 +1,253 @@
+{
+  "nodes": [
+    {
+      "id": "src/ripple/config.py::RippleConfig",
+      "name": "RippleConfig",
+      "qualname": "ripple.config.RippleConfig",
+      "file": "src/ripple/config.py",
+      "kind": "class",
+      "line": 9
+    },
+    {
+      "id": "src/ripple/diffmap.py::ChangedSymbol",
+      "name": "ChangedSymbol",
+      "qualname": "ripple.diffmap.ChangedSymbol",
+      "file": "src/ripple/diffmap.py",
+      "kind": "class",
+      "line": 14
+    },
+    {
+      "id": "src/ripple/diffmap.py::parse_diff",
+      "name": "parse_diff",
+      "qualname": "ripple.diffmap.parse_diff",
+      "file": "src/ripple/diffmap.py",
+      "kind": "function",
+      "line": 133
+    },
+    {
+      "id": "src/ripple/graphio.py::CodeGraph",
+      "name": "CodeGraph",
+      "qualname": "ripple.graphio.CodeGraph",
+      "file": "src/ripple/graphio.py",
+      "kind": "class",
+      "line": 29
+    },
+    {
+      "id": "src/ripple/graphio.py::load_graph",
+      "name": "load_graph",
+      "qualname": "ripple.graphio.load_graph",
+      "file": "src/ripple/graphio.py",
+      "kind": "function",
+      "line": 70
+    },
+    {
+      "id": "src/ripple/impact.py::CandidateTest",
+      "name": "CandidateTest",
+      "qualname": "ripple.impact.CandidateTest",
+      "file": "src/ripple/impact.py",
+      "kind": "class",
+      "line": 12
+    },
+    {
+      "id": "src/ripple/impact.py::compute_impact",
+      "name": "compute_impact",
+      "qualname": "ripple.impact.compute_impact",
+      "file": "src/ripple/impact.py",
+      "kind": "function",
+      "line": 40
+    },
+    {
+      "id": "src/ripple/llm.py::OllamaClient",
+      "name": "OllamaClient",
+      "qualname": "ripple.llm.OllamaClient",
+      "file": "src/ripple/llm.py",
+      "kind": "class",
+      "line": 23
+    },
+    {
+      "id": "src/ripple/triage.py::Triage",
+      "name": "Triage",
+      "qualname": "ripple.triage.Triage",
+      "file": "src/ripple/triage.py",
+      "kind": "class",
+      "line": 12
+    },
+    {
+      "id": "src/ripple/triage.py::Rank",
+      "name": "Rank",
+      "qualname": "ripple.triage.Rank",
+      "file": "src/ripple/triage.py",
+      "kind": "class",
+      "line": 19
+    },
+    {
+      "id": "src/ripple/triage.py::select_and_rank_tests",
+      "name": "select_and_rank_tests",
+      "qualname": "ripple.triage.select_and_rank_tests",
+      "file": "src/ripple/triage.py",
+      "kind": "function",
+      "line": 141
+    },
+    {
+      "id": "src/ripple/runner.py::run_tests",
+      "name": "run_tests",
+      "qualname": "ripple.runner.run_tests",
+      "file": "src/ripple/runner.py",
+      "kind": "function",
+      "line": 21
+    },
+    {
+      "id": "src/ripple/report.py::Report",
+      "name": "Report",
+      "qualname": "ripple.report.Report",
+      "file": "src/ripple/report.py",
+      "kind": "class",
+      "line": 10
+    },
+    {
+      "id": "src/ripple/report.py::generate_brief",
+      "name": "generate_brief",
+      "qualname": "ripple.report.generate_brief",
+      "file": "src/ripple/report.py",
+      "kind": "function",
+      "line": 25
+    },
+    {
+      "id": "src/ripple/ripplemap.py::build_ripple_map_html",
+      "name": "build_ripple_map_html",
+      "qualname": "ripple.ripplemap.build_ripple_map_html",
+      "file": "src/ripple/ripplemap.py",
+      "kind": "function",
+      "line": 16
+    },
+    {
+      "id": "src/ripple/cli.py::main",
+      "name": "main",
+      "qualname": "ripple.cli.main",
+      "file": "src/ripple/cli.py",
+      "kind": "function",
+      "line": 196
+    },
+    {
+      "id": "tests/test_diffmap.py::test_body_change_maps_to_function",
+      "name": "test_body_change_maps_to_function",
+      "qualname": "tests.test_diffmap.test_body_change_maps_to_function",
+      "file": "tests/test_diffmap.py",
+      "kind": "function",
+      "line": 7
+    },
+    {
+      "id": "tests/test_impact.py::test_exact_candidates_on_mini_app",
+      "name": "test_exact_candidates_on_mini_app",
+      "qualname": "tests.test_impact.test_exact_candidates_on_mini_app",
+      "file": "tests/test_impact.py",
+      "kind": "function",
+      "line": 20
+    },
+    {
+      "id": "tests/test_triage.py::test_garbage_json_falls_back_to_graph_ranking",
+      "name": "test_garbage_json_falls_back_to_graph_ranking",
+      "qualname": "tests.test_triage.test_garbage_json_falls_back_to_graph_ranking",
+      "file": "tests/test_triage.py",
+      "kind": "function",
+      "line": 25
+    },
+    {
+      "id": "tests/test_cli_e2e.py::test_e2e_clean_change_exits_0",
+      "name": "test_e2e_clean_change_exits_0",
+      "qualname": "tests.test_cli_e2e.test_e2e_clean_change_exits_0",
+      "file": "tests/test_cli_e2e.py",
+      "kind": "function",
+      "line": 11
+    },
+    {
+      "id": "tests/test_ripplemap.py::test_html_has_no_external_urls",
+      "name": "test_html_has_no_external_urls",
+      "qualname": "tests.test_ripplemap.test_html_has_no_external_urls",
+      "file": "tests/test_ripplemap.py",
+      "kind": "function",
+      "line": 12
+    },
+    {
+      "id": "tests/test_eval_harness.py::test_mutator_is_deterministic_with_seed",
+      "name": "test_mutator_is_deterministic_with_seed",
+      "qualname": "tests.test_eval_harness.test_mutator_is_deterministic_with_seed",
+      "file": "tests/test_eval_harness.py",
+      "kind": "function",
+      "line": 9
+    }
+  ],
+  "edges": [
+    {
+      "source": "src/ripple/cli.py::main",
+      "target": "src/ripple/diffmap.py::parse_diff",
+      "relation": "calls"
+    },
+    {
+      "source": "src/ripple/cli.py::main",
+      "target": "src/ripple/graphio.py::load_graph",
+      "relation": "calls"
+    },
+    {
+      "source": "src/ripple/cli.py::main",
+      "target": "src/ripple/triage.py::select_and_rank_tests",
+      "relation": "calls"
+    },
+    {
+      "source": "src/ripple/cli.py::main",
+      "target": "src/ripple/runner.py::run_tests",
+      "relation": "calls"
+    },
+    {
+      "source": "src/ripple/cli.py::main",
+      "target": "src/ripple/report.py::generate_brief",
+      "relation": "calls"
+    },
+    {
+      "source": "src/ripple/cli.py::main",
+      "target": "src/ripple/ripplemap.py::build_ripple_map_html",
+      "relation": "calls"
+    },
+    {
+      "source": "src/ripple/triage.py::select_and_rank_tests",
+      "target": "src/ripple/impact.py::compute_impact",
+      "relation": "calls"
+    },
+    {
+      "source": "src/ripple/triage.py::select_and_rank_tests",
+      "target": "src/ripple/llm.py::OllamaClient",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_diffmap.py::test_body_change_maps_to_function",
+      "target": "src/ripple/diffmap.py::parse_diff",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_impact.py::test_exact_candidates_on_mini_app",
+      "target": "src/ripple/impact.py::compute_impact",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_triage.py::test_garbage_json_falls_back_to_graph_ranking",
+      "target": "src/ripple/triage.py::select_and_rank_tests",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_cli_e2e.py::test_e2e_clean_change_exits_0",
+      "target": "src/ripple/cli.py::main",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_ripplemap.py::test_html_has_no_external_urls",
+      "target": "src/ripple/ripplemap.py::build_ripple_map_html",
+      "relation": "calls"
+    }
+  ],
+  "directed": true,
+  "metadata": {
+    "generator": "graphify",
+    "mode": "code-only",
+    "project": "ripple"
+  }
+}

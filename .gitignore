@@ -1,0 +1,37 @@
+# Environment variables & secrets
+.env
+.env.local
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.json
+htmlcov/
+.junit.xml
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Evaluation working directory
+.work/
+
+# Target cloned repos (large, cloned as needed)
+targets/
+
+# Note: graphify-out/ is intentionally NOT ignored per RIPPLE spec

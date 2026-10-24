@@ -1,0 +1,233 @@
+{
+  "nodes": [
+    {
+      "id": "pricing.py::apply_discount",
+      "name": "apply_discount",
+      "qualname": "pricing.apply_discount",
+      "file": "pricing.py",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "id": "pricing.py::calculate_tax",
+      "name": "calculate_tax",
+      "qualname": "pricing.calculate_tax",
+      "file": "pricing.py",
+      "kind": "function",
+      "line": 11
+    },
+    {
+      "id": "pricing.py::get_final_price",
+      "name": "get_final_price",
+      "qualname": "pricing.get_final_price",
+      "file": "pricing.py",
+      "kind": "function",
+      "line": 16
+    },
+    {
+      "id": "inventory.py::check_stock",
+      "name": "check_stock",
+      "qualname": "inventory.check_stock",
+      "file": "inventory.py",
+      "kind": "function",
+      "line": 6
+    },
+    {
+      "id": "inventory.py::reserve_item",
+      "name": "reserve_item",
+      "qualname": "inventory.reserve_item",
+      "file": "inventory.py",
+      "kind": "function",
+      "line": 11
+    },
+    {
+      "id": "cart.py::Cart.add_item",
+      "name": "Cart.add_item",
+      "qualname": "cart.Cart.add_item",
+      "file": "cart.py",
+      "kind": "method",
+      "line": 11
+    },
+    {
+      "id": "cart.py::Cart.get_total",
+      "name": "Cart.get_total",
+      "qualname": "cart.Cart.get_total",
+      "file": "cart.py",
+      "kind": "method",
+      "line": 17
+    },
+    {
+      "id": "checkout.py::process_order",
+      "name": "process_order",
+      "qualname": "checkout.process_order",
+      "file": "checkout.py",
+      "kind": "function",
+      "line": 8
+    },
+    {
+      "id": "utils.py::format_currency",
+      "name": "format_currency",
+      "qualname": "utils.format_currency",
+      "file": "utils.py",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "id": "tests/test_pricing.py::test_apply_discount",
+      "name": "test_apply_discount",
+      "qualname": "tests.test_pricing.test_apply_discount",
+      "file": "tests/test_pricing.py",
+      "kind": "function",
+      "line": 5
+    },
+    {
+      "id": "tests/test_pricing.py::test_calculate_tax",
+      "name": "test_calculate_tax",
+      "qualname": "tests.test_pricing.test_calculate_tax",
+      "file": "tests/test_pricing.py",
+      "kind": "function",
+      "line": 11
+    },
+    {
+      "id": "tests/test_pricing.py::test_get_final_price",
+      "name": "test_get_final_price",
+      "qualname": "tests.test_pricing.test_get_final_price",
+      "file": "tests/test_pricing.py",
+      "kind": "function",
+      "line": 15
+    },
+    {
+      "id": "tests/test_cart.py::test_cart_add_item",
+      "name": "test_cart_add_item",
+      "qualname": "tests.test_cart.test_cart_add_item",
+      "file": "tests/test_cart.py",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "id": "tests/test_cart.py::test_cart_total",
+      "name": "test_cart_total",
+      "qualname": "tests.test_cart.test_cart_total",
+      "file": "tests/test_cart.py",
+      "kind": "function",
+      "line": 11
+    },
+    {
+      "id": "tests/test_checkout.py::test_checkout_process",
+      "name": "test_checkout_process",
+      "qualname": "tests.test_checkout.test_checkout_process",
+      "file": "tests/test_checkout.py",
+      "kind": "function",
+      "line": 5
+    },
+    {
+      "id": "tests/test_inventory.py::test_check_stock",
+      "name": "test_check_stock",
+      "qualname": "tests.test_inventory.test_check_stock",
+      "file": "tests/test_inventory.py",
+      "kind": "function",
+      "line": 4
+    },
+    {
+      "id": "tests/test_inventory.py::test_reserve_item",
+      "name": "test_reserve_item",
+      "qualname": "tests.test_inventory.test_reserve_item",
+      "file": "tests/test_inventory.py",
+      "kind": "function",
+      "line": 9
+    }
+  ],
+  "edges": [
+    {
+      "source": "tests/test_pricing.py::test_apply_discount",
+      "target": "pricing.py::apply_discount",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_pricing.py::test_calculate_tax",
+      "target": "pricing.py::calculate_tax",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_pricing.py::test_get_final_price",
+      "target": "pricing.py::get_final_price",
+      "relation": "calls"
+    },
+    {
+      "source": "pricing.py::get_final_price",
+      "target": "pricing.py::apply_discount",
+      "relation": "calls"
+    },
+    {
+      "source": "pricing.py::get_final_price",
+      "target": "pricing.py::calculate_tax",
+      "relation": "calls"
+    },
+    {
+      "source": "cart.py::Cart.get_total",
+      "target": "pricing.py::apply_discount",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_cart.py::test_cart_total",
+      "target": "cart.py::Cart.get_total",
+      "relation": "calls"
+    },
+    {
+      "source": "checkout.py::process_order",
+      "target": "pricing.py::get_final_price",
+      "relation": "calls"
+    },
+    {
+      "source": "checkout.py::process_order",
+      "target": "utils.py::format_currency",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_checkout.py::test_checkout_process",
+      "target": "checkout.py::process_order",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_inventory.py::test_check_stock",
+      "target": "inventory.py::check_stock",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_inventory.py::test_reserve_item",
+      "target": "inventory.py::reserve_item",
+      "relation": "calls"
+    },
+    {
+      "source": "tests/test_inventory.py",
+      "target": "inventory.py",
+      "relation": "imports"
+    },
+    {
+      "source": "tests/test_pricing.py",
+      "target": "pricing.py",
+      "relation": "imports"
+    },
+    {
+      "source": "tests/test_cart.py",
+      "target": "cart.py",
+      "relation": "imports"
+    },
+    {
+      "source": "tests/test_checkout.py",
+      "target": "checkout.py",
+      "relation": "imports"
+    },
+    {
+      "source": "cart.py",
+      "target": "pricing.py",
+      "relation": "imports"
+    },
+    {
+      "source": "checkout.py",
+      "target": "pricing.py",
+      "relation": "imports"
+    }
+  ],
+  "directed": true
+}

@@ -1,0 +1,5 @@
+--- a/pricing.py
++++ b/pricing.py
+@@ -6,1 +6,1 @@
+-    return price * (1.0 - discount)
++    return price * (1.0 + discount)
