@@ -1,83 +1,65 @@
-# Graphify `graph.json` Schema Specification
+# Graphify `graph.json` schema (as observed)
 
-This document records the structure, conventions, and normalization rules for Graphify's `graphify-out/graph.json` based on Graphify code-only extraction (`graphify extract . --code-only`).
+Inspected from real output of `graphify extract . --code-only` (Graphify 0.9.95) on
+`tests/fixtures/mini_app` and `pallets/click` 8.1.7. `src/ripple/graphio.py` normalizes it.
 
-## 1. Top-Level Structure
-
-A `graph.json` file produced by Graphify code-only mode contains a node-link graph representation:
-
+## Top level
+NetworkX node-link format:
 ```json
-{
-  "nodes": [
-    {
-      "id": "src/click/core.py::Command.invoke",
-      "name": "invoke",
-      "qualname": "click.core.Command.invoke",
-      "file": "src/click/core.py",
-      "kind": "method",
-      "line": 1012,
-      "end_line": 1045
-    }
-  ],
-  "edges": [
-    {
-      "source": "tests/test_core.py::test_invoke_ctx",
-      "target": "src/click/core.py::Command.invoke",
-      "relation": "calls"
-    }
-  ],
-  "directed": true,
-  "metadata": {
-    "extractor": "graphify-code",
-    "version": "0.1.0"
-  }
-}
+{"directed": false, "multigraph": false,
+ "graph": {"schema_version": 1, "graphify_version": "0.9.95"},
+ "nodes": [...], "links": [...], "hyperedges": [...]}
 ```
+Edges are under **`links`** (not `edges`).
 
-Graphify also supports dictionary-keyed node representations where `nodes` is `{ "<node_id>": { ...node_data... } }`. The RIPPLE adapter in `graphio.py` normalizes both formats into uniform dataclasses.
+## Nodes
+```json
+{"id": "pricing_apply_discount", "label": "apply_discount()", "source_file": "pricing.py",
+ "source_location": "L4", "_callable": true, "_origin": "ast",
+ "community": 3, "community_name": "Community 3", "file_type": "code", "norm_label": "apply_discount()"}
+```
+| What | How to recognise it |
+|---|---|
+| Function | `_callable: true`, label `name()` |
+| Method | `_callable: true`, label `.name()`; linked from its class by a `method` edge |
+| Class | `_callable_class: true`, label `Name` |
+| Module (file) | label equals the file name (e.g. `pricing.py`, `click/__init__.py`), no `_callable` |
+| External | `external: true`, `type: "external"`, no `source_file` (e.g. `pytest`, `os`) |
+| Docstring | `*_rationale_<line>` ids, linked by `rationale_for` edges |
 
-## 2. Node Schema
+- File paths (`source_file`) are relative to the directory Graphify ran in (the repo root).
+- Line numbers are strings like `"L4"` (start line only; no end line).
+- There is **no qualname field**. RIPPLE derives `Class.method` from `method` edges.
+- Ids are slug-like (`tests_test_pricing_test_apply_discount`); do not parse them.
+- Functions nested inside tests (e.g. CLI callbacks named `test_*`) appear as normal function nodes; RIPPLE only treats module-level `test*` functions and `Test*` class methods as runnable tests.
 
-| Field | Type | Description | Fallback / Default |
-|---|---|---|---|
-| `id` | `str` | Unique node identifier (e.g. `path/to/file.py::QualName` or canonical path) | Required |
-| `name` | `str` | Short symbol identifier (e.g. `invoke`) | Derived from `id` |
-| `qualname` | `str` | Fully-qualified symbol name (e.g. `click.core.Command.invoke`) | `name` or `id` |
-| `file` | `str` | Relative file path from repo root | Extracted from `id` |
-| `kind` | `str` | Symbol kind: `function`, `method`, `class`, `module` | `"function"` |
-| `line` | `int` | Definition starting line (1-indexed) | `start_line`, `startLine`, or `1` |
-| `end_line` | `int` (opt) | Definition ending line | `endLine` or `line` |
+## Edges (`links`)
+```json
+{"source": "cart_cart_get_total", "target": "pricing_apply_discount", "relation": "calls",
+ "context": "call", "source_file": "cart.py", "source_location": "L24",
+ "confidence": "EXTRACTED", "confidence_score": 1.0, "weight": 1.0, "_origin": "ast"}
+```
+Relations seen on Click (count): `contains` 985, `calls` 768, `references` 582, `method` 354,
+`imports` 309, `rationale_for` 296, `indirect_call` 271, `uses` 163, `imports_from` 114,
+`inherits` 41, `re_exports` 9.
 
-### Test Nodes
-Test nodes are recognized by:
-1. `file` located inside `tests/` or named `test_*.py` or `*_test.py`.
-2. `name` beginning with `test_` or belonging to a class starting with `Test`.
-3. Pytest node ID mapping: `f"{file}::{qualname.replace('.', '::')}"` or `f"{file}::{name}"`.
-
-## 3. Edge Schema & Relation Types
-
-| Field | Type | Description |
+| Relation | Direction (source -> target) | Used by RIPPLE for |
 |---|---|---|
-| `source` / `src` | `str` | Source node ID |
-| `target` / `dst` | `str` | Target node ID |
-| `relation` / `type` | `str` | Relation type: `calls`/`call`, `imports`/`import`, `contains`, `inherits` |
+| `calls`, `indirect_call` | caller -> callee | ripple traversal |
+| `references` | user -> referenced symbol (e.g. decorator) | ripple traversal |
+| `uses` | user -> type in annotation | ripple traversal |
+| `inherits` | subclass -> base | ripple traversal |
+| `method` | class -> method | ripple traversal (method change reaches users of the class) |
+| `imports`, `imports_from`, `re_exports` | importing file -> imported symbol/module | import-closure fallback |
+| `contains` | file -> top-level symbol, function -> nested function | runnable-test detection |
+| `rationale_for` | docstring -> symbol | ignored |
 
-> [!NOTE] Resilient Normalization
-> Real Graphify extractors exhibit minor variation across releases (e.g., using `call` instead of `calls`, or `start_line` instead of `line`). RIPPLE's normalizer in `graphio.py` defensively matches substrings (`"call"` in relation) and accepts `start_line`/`startLine` fallbacks.
+## Direction
+The top-level flag says `"directed": false`, but source/target order is meaningful: on Click all
+768 `calls` edges have `source_file` equal to the caller's file, and no test function is ever a
+`calls` target. RIPPLE therefore treats Graphify graphs as directed (`direction_known = True`).
 
-### Relation Semantics
-- **`calls`**: `source` (caller) calls `target` (callee).
-  - *Example*: `tests/test_core.py::test_command` -> `src/click/core.py::Command.invoke`.
-- **`imports`**: `source` module/function imports `target` module/symbol.
-  - *Example*: `src/click/core.py` -> `src/click/utils.py`.
-- **`contains`**: Parent module or class defines child function or class.
-  - *Example*: `src/click/core.py::Command` -> `src/click/core.py::Command.invoke`.
-
-## 4. Directionality & Impact Traversal
-- **Direction**: Edges are directed. For `calls`, the edge points from caller to callee (`A -> B` means `A` calls `B`).
-- **Impact Reverse Traversal**: If function `B` changes, affected callers are found by **reversing** the `calls` relation (`incoming` edges in a directed graph, or traversing from `B` backwards to `A`).
-- **Undirected Fallback**: If direction cannot be determined (`direction_known = False`), RIPPLE explores the undirected neighborhood, flagging candidates with `over_approx = True` to guarantee safety (never under-selecting tests).
-
-## 5. Import Closure Fallback
-When static call resolution misses dynamic dispatch (e.g., click's callback invocations or decorator wrapping), RIPPLE checks module-level `imports` edges:
-Any test file importing the changed module is included with `source = "import_closure"`, positioned after direct call-graph candidates in the ranking.
+## Limits observed
+- Calls through dynamic dispatch are missing (Click: `CliRunner.invoke(cli)` -> `cli.main()`).
+- Attribute access on re-exported packages (`click.command`) often resolves to unnamed placeholder
+  nodes without `source_file`, not to the library function.
