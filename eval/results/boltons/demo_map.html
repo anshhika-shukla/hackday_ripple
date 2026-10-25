@@ -59,8 +59,8 @@
 <body>
 <div class="wrap">
   <h1><span>RIPPLE</span> · what your change could break</h1>
-  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>34</strong> test functions</span><span class="d">pytest ran 35 of 519 test cases (6.7%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught-v">✓ Bug caught</span><span class="d">1 test failed, 34 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.06 s · AI 2.27 s · running them 0.61 s · all tests 2.44 s</span></div></div>
-  <div class="model"><span class="k">The AI's read</span> <strong>Risk 3/5.</strong> Modified human_readable_list to incorrectly repeat items[1] in the output, potentially breaking expected behavior for lists with two or more items.</div>
+  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>34</strong> test functions</span><span class="d">pytest ran 35 of 519 test cases (6.7%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught-v">✓ Bug caught</span><span class="d">1 test failed, 34 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.04 s · AI 3.07 s · running them 0.32 s · all tests 2.07 s</span></div></div>
+  <div class="model"><span class="k">The AI's read</span> <strong>Risk 3/5.</strong> Modified the human_readable_list function to incorrectly reuse items[1] in both positions, which changes the output behavior and may produce incorrect results for lists with more than two items. This is a logical error that affects the core</div>
   <p class="summary">RIPPLE followed the code from <code>human_readable_list</code> to <strong>2</strong> tests, and ran <strong>32</strong> more from files that import the changed code, to be safe. <strong>1</strong> failed, so the bug was caught before it shipped.</p>
   <div class="story">
     <div class="col"><h2><i style="background:var(--change)"></i>1 · Your change</h2><div class="changed-box"><code>human_readable_list</code><div class="muted">boltons/strutils.py</div></div></div>

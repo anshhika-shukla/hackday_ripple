@@ -68,7 +68,7 @@
     <div>
       <div class="badge">Narrow Agentic Tools · Hack Day Jaipur (LNMIIT)</div>
       <h1><span>RIPPLE</span> dashboard</h1>
-      <p class="tagline">Run ~10% of your tests. Catch the bug anyway. Fully offline.</p>
+      <p class="tagline">Run ~10% of your tests. Catch the bug anyway. No internet needed.</p>
     </div>
     <button class="theme" id="theme" type="button">Dark mode</button>
   </header>
@@ -91,8 +91,8 @@
   <h2>System</h2>
   <div class="status">
     <div><span>Local AI runtime (Ollama)</span><span id="ollama">checking…</span></div>
-    <div><span>Model</span><span>qwen3:4b-instruct (fallback qwen3:1.7b)</span></div>
-    <div><span>Network</span><span>Not needed at run time (Ollama on localhost)</span></div>
+    <div><span>Model</span><span>qwen3:4b-instruct (4.0B, Q4_K_M, Apache-2.0)</span></div>
+    <div><span>Network</span><span>Only Ollama on localhost at run time (measured)</span></div>
     <div><span>RIPPLE's own tests</span><span>43 offline + 2 that need the local model</span></div>
   </div>
   <pre>bash scripts/demo.sh                       # live demo on boltons (also: click, mini_app)

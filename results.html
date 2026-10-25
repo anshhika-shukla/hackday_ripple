@@ -102,7 +102,7 @@
   <header>
     <div>
       <h1><span>RIPPLE</span> · which tests should I run?</h1>
-      <p class="tagline">Before you push a change, RIPPLE picks the tests that could break, runs only those, and a small AI on your laptop explains the change. Fully offline.</p>
+      <p class="tagline">Before you push a change, RIPPLE picks the tests that could break, runs only those, and a small AI on your laptop explains the change. No internet needed.</p>
     </div>
     <button class="theme" id="theme" type="button">Dark mode</button>
   </header>
@@ -746,19 +746,19 @@ const DATA = [
     ]
    },
    "timing": {
-    "graph_s": 0.059,
-    "llm_s": 2.273,
-    "tests_s": 0.606,
-    "full_suite_s": 2.44
+    "graph_s": 0.038,
+    "llm_s": 3.074,
+    "tests_s": 0.32,
+    "full_suite_s": 2.07
    },
-   "tokens_per_sec": 49.25,
+   "tokens_per_sec": 43.52,
    "guardrails_fired": [
     "G1"
    ],
    "triage": {
     "change_kind": "behavior",
     "risk": 3,
-    "summary": "Modified human_readable_list to incorrectly repeat items[1] in the output, potentially breaking expected behavior for lists with two or more items."
+    "summary": "Modified the human_readable_list function to incorrectly reuse items[1] in both positions, which changes the output behavior and may produce incorrect results for lists with more than two items. This is a logical error that affects the core"
    },
    "before": "return f'{items[0]} {conjunction} {items[1]}'",
    "after": "return f'{items[1]} {conjunction} {items[1]}'",

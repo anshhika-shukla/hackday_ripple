@@ -1,0 +1,178 @@
+===== RUN 1 (2026-10-25 09:07:10) =====
+======================================================================
+🌊 RIPPLE Demo: Offline change-impact & test-selection agent
+======================================================================
+
+[Step 1] Planting a one-line bug in targets/boltons
+diff --git a/boltons/strutils.py b/boltons/strutils.py
+index 74441c7..27b591a 100644
+--- a/boltons/strutils.py
++++ b/boltons/strutils.py
+@@ -1324,7 +1324,7 @@ def human_readable_list(items: typing.Sequence[str], delimiter: str = ',', conju
+         return items[0]
+ 
+     if len(items) == 2:
+-        return f'{items[0]} {conjunction} {items[1]}'
++        return f'{items[1]} {conjunction} {items[1]}'
+ 
+     return f'{delimiter.join(items[:-1])}{delimiter if oxford else " "}{conjunction} {items[-1]}'
+ 
+
+[Step 2] ripple check --run --baseline --no-cache (select, ask the local LLM, run, compare to full suite)
+----------------------------------------------------------------------
+❌ RIPPLE Test Selection Brief (FAILED)                                         
+
+ • Changed Symbols: boltons/strutils.py::human_readable_list (function)         
+ • Ripple Scope: Selected 34 test functions (34 candidates identified); pytest  
+   ran 35 of 519 test cases (6.7%)                                              
+ • Execution Mode: SAFE (LLM Status: ok)                                        
+ • Guardrails Triggered: G1                                                     
+ • Model's read (qwen3:4b-instruct): behavior change, risk 3/5. Modified        
+   human_readable_list to return a different string format, changing the first  
+   item in the list to the second item. This alters the output behavior,        
+   potentially breaking expected outputs in caller code, especially when the    
+   first and第二                                                                
+ • Results: 34 passed, 1 failed                                                 
+
+🚨 Caught Regressions:                                                          
+
+ • tests/test_strutils.py::test_human_readable_list                             
+
+⏱️ Performance & Timing                                                         
+
+ • Graph Impact Analysis: 0.05s                                                 
+ • Local LLM Triage/Rank: 2.55s                                                 
+ • Pytest Subset Execution: 0.30s                                               
+ • Model speed: 54.7 tokens/sec                                                 
+ • Full suite (measured): 2.13s vs RIPPLE total 2.90s                           
+ripple exit code: 1 (1 = selected tests caught a regression)
+
+[Step 3] Generating impact chart: eval/results/boltons/demo_map.html
+✅ RIPPLE map written to /home/amulb/projects/ripple/eval/results/boltons/demo_map.html
+
+[Step 4] Restoring target
+
+[Step 5] Updating results page: results.html
+boltons: 44/46 caught (95.7%), 8.3% of tests run, demo=yes
+click: 24/25 caught (96.0%), 99.4% of tests run, demo=yes
+mini_app: 18/18 caught (100.0%), 56.9% of tests run, demo=yes
+wrote /home/amulb/projects/ripple/results.html
+✅ Demo complete. Target restored.
+===== RUN 2 (2026-10-25 09:07:18) =====
+======================================================================
+🌊 RIPPLE Demo: Offline change-impact & test-selection agent
+======================================================================
+
+[Step 1] Planting a one-line bug in targets/boltons
+diff --git a/boltons/strutils.py b/boltons/strutils.py
+index 74441c7..27b591a 100644
+--- a/boltons/strutils.py
++++ b/boltons/strutils.py
+@@ -1324,7 +1324,7 @@ def human_readable_list(items: typing.Sequence[str], delimiter: str = ',', conju
+         return items[0]
+ 
+     if len(items) == 2:
+-        return f'{items[0]} {conjunction} {items[1]}'
++        return f'{items[1]} {conjunction} {items[1]}'
+ 
+     return f'{delimiter.join(items[:-1])}{delimiter if oxford else " "}{conjunction} {items[-1]}'
+ 
+
+[Step 2] ripple check --run --baseline --no-cache (select, ask the local LLM, run, compare to full suite)
+----------------------------------------------------------------------
+❌ RIPPLE Test Selection Brief (FAILED)                                         
+
+ • Changed Symbols: boltons/strutils.py::human_readable_list (function)         
+ • Ripple Scope: Selected 34 test functions (34 candidates identified); pytest  
+   ran 35 of 519 test cases (6.7%)                                              
+ • Execution Mode: SAFE (LLM Status: ok)                                        
+ • Guardrails Triggered: G1                                                     
+ • Model's read (qwen3:4b-instruct): behavior change, risk 3/5. Modified the    
+   human_readable_list function to incorrectly reuse items[1] in both positions,
+   which changes the output behavior and may produce incorrect results for lists
+   with more than two items. This is a logical error that affects the core      
+ • Results: 34 passed, 1 failed                                                 
+
+🚨 Caught Regressions:                                                          
+
+ • tests/test_strutils.py::test_human_readable_list                             
+
+⏱️ Performance & Timing                                                         
+
+ • Graph Impact Analysis: 0.07s                                                 
+ • Local LLM Triage/Rank: 3.37s                                                 
+ • Pytest Subset Execution: 0.34s                                               
+ • Model speed: 45.9 tokens/sec                                                 
+ • Full suite (measured): 2.18s vs RIPPLE total 3.78s                           
+ripple exit code: 1 (1 = selected tests caught a regression)
+
+[Step 3] Generating impact chart: eval/results/boltons/demo_map.html
+✅ RIPPLE map written to /home/amulb/projects/ripple/eval/results/boltons/demo_map.html
+
+[Step 4] Restoring target
+
+[Step 5] Updating results page: results.html
+boltons: 44/46 caught (95.7%), 8.3% of tests run, demo=yes
+click: 24/25 caught (96.0%), 99.4% of tests run, demo=yes
+mini_app: 18/18 caught (100.0%), 56.9% of tests run, demo=yes
+wrote /home/amulb/projects/ripple/results.html
+✅ Demo complete. Target restored.
+===== RUN 3 (2026-10-25 09:07:29) =====
+======================================================================
+🌊 RIPPLE Demo: Offline change-impact & test-selection agent
+======================================================================
+
+[Step 1] Planting a one-line bug in targets/boltons
+diff --git a/boltons/strutils.py b/boltons/strutils.py
+index 74441c7..27b591a 100644
+--- a/boltons/strutils.py
++++ b/boltons/strutils.py
+@@ -1324,7 +1324,7 @@ def human_readable_list(items: typing.Sequence[str], delimiter: str = ',', conju
+         return items[0]
+ 
+     if len(items) == 2:
+-        return f'{items[0]} {conjunction} {items[1]}'
++        return f'{items[1]} {conjunction} {items[1]}'
+ 
+     return f'{delimiter.join(items[:-1])}{delimiter if oxford else " "}{conjunction} {items[-1]}'
+ 
+
+[Step 2] ripple check --run --baseline --no-cache (select, ask the local LLM, run, compare to full suite)
+----------------------------------------------------------------------
+❌ RIPPLE Test Selection Brief (FAILED)                                         
+
+ • Changed Symbols: boltons/strutils.py::human_readable_list (function)         
+ • Ripple Scope: Selected 34 test functions (34 candidates identified); pytest  
+   ran 35 of 519 test cases (6.7%)                                              
+ • Execution Mode: SAFE (LLM Status: ok)                                        
+ • Guardrails Triggered: G1                                                     
+ • Model's read (qwen3:4b-instruct): behavior change, risk 3/5. Modified the    
+   human_readable_list function to incorrectly reuse items[1] in both positions,
+   which changes the output behavior and may produce incorrect results for lists
+   with more than two items. This is a logical error that affects the core      
+ • Results: 34 passed, 1 failed                                                 
+
+🚨 Caught Regressions:                                                          
+
+ • tests/test_strutils.py::test_human_readable_list                             
+
+⏱️ Performance & Timing                                                         
+
+ • Graph Impact Analysis: 0.04s                                                 
+ • Local LLM Triage/Rank: 3.07s                                                 
+ • Pytest Subset Execution: 0.32s                                               
+ • Model speed: 43.5 tokens/sec                                                 
+ • Full suite (measured): 2.07s vs RIPPLE total 3.43s                           
+ripple exit code: 1 (1 = selected tests caught a regression)
+
+[Step 3] Generating impact chart: eval/results/boltons/demo_map.html
+✅ RIPPLE map written to /home/amulb/projects/ripple/eval/results/boltons/demo_map.html
+
+[Step 4] Restoring target
+
+[Step 5] Updating results page: results.html
+boltons: 44/46 caught (95.7%), 8.3% of tests run, demo=yes
+click: 24/25 caught (96.0%), 99.4% of tests run, demo=yes
+mini_app: 18/18 caught (100.0%), 56.9% of tests run, demo=yes
+wrote /home/amulb/projects/ripple/results.html
+✅ Demo complete. Target restored.
