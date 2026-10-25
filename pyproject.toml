@@ -30,6 +30,7 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+norecursedirs = ["fixtures", "targets", ".work", ".venv"]
 markers = [
     "live: marks tests that require a running local Ollama instance (deselect with '-m \"not live\"')",
 ]

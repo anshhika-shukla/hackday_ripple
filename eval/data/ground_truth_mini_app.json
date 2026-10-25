@@ -1,0 +1,366 @@
+{
+  "target_repo": "/home/amulb/projects/ripple/targets/mini_app",
+  "total_tests": 8,
+  "all_test_ids": [
+    "tests/test_cart.py::test_cart_add_item",
+    "tests/test_cart.py::test_cart_total",
+    "tests/test_checkout.py::test_checkout_process",
+    "tests/test_inventory.py::test_check_stock",
+    "tests/test_inventory.py::test_reserve_item",
+    "tests/test_pricing.py::test_apply_discount",
+    "tests/test_pricing.py::test_calculate_tax",
+    "tests/test_pricing.py::test_get_final_price"
+  ],
+  "baseline_failures": [],
+  "full_suite_duration_s": 0.24,
+  "total_mutants": 26,
+  "killed_mutants": 18,
+  "mutants": [
+    {
+      "mutant_id": 1,
+      "file": "cart.py",
+      "line": 19,
+      "operator": "BOOL_NEGATE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -16,7 +16,7 @@\n         if reserve_item(item_id, quantity):\n             self.items.append({\"item_id\": item_id, \"price\": price, \"qty\": quantity})\n             return True\n-        return False\n+        return True\n \n     def get_total(self, discount: float = 0.0) -> float:\n         subtotal = sum(item[\"price\"] * item[\"qty\"] for item in self.items)\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.3,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 2,
+      "file": "cart.py",
+      "line": 18,
+      "operator": "BOOL_NEGATE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -15,7 +15,7 @@\n     def add_item(self, item_id: str, price: float, quantity: int = 1) -> bool:\n         if reserve_item(item_id, quantity):\n             self.items.append({\"item_id\": item_id, \"price\": price, \"qty\": quantity})\n-            return True\n+            return False\n         return False\n \n     def get_total(self, discount: float = 0.0) -> float:\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_add_item"
+      ],
+      "duration_s": 0.19,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 3,
+      "file": "pricing.py",
+      "line": 6,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -3,7 +3,7 @@\n \n def apply_discount(price: float, discount: float) -> float:\n     \"\"\"Apply percentage discount to price.\"\"\"\n-    if discount < 0 or discount > 1:\n+    if discount < 1 or discount > 1:\n         raise ValueError(\"Discount must be between 0 and 1\")\n     return price * (1.0 - discount)\n \n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_total",
+        "tests/test_checkout.py::test_checkout_process",
+        "tests/test_pricing.py::test_apply_discount",
+        "tests/test_pricing.py::test_get_final_price"
+      ],
+      "duration_s": 0.18,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 4,
+      "file": "cart.py",
+      "line": 19,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -16,7 +16,7 @@\n         if reserve_item(item_id, quantity):\n             self.items.append({\"item_id\": item_id, \"price\": price, \"qty\": quantity})\n             return True\n-        return False\n+        return None\n \n     def get_total(self, discount: float = 0.0) -> float:\n         subtotal = sum(item[\"price\"] * item[\"qty\"] for item in self.items)\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.17,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 5,
+      "file": "cart.py",
+      "line": 15,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -12,7 +12,7 @@\n     def __init__(self):\n         self.items = []\n \n-    def add_item(self, item_id: str, price: float, quantity: int = 1) -> bool:\n+    def add_item(self, item_id: str, price: float, quantity: int = 2) -> bool:\n         if reserve_item(item_id, quantity):\n             self.items.append({\"item_id\": item_id, \"price\": price, \"qty\": quantity})\n             return True\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.19,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 6,
+      "file": "pricing.py",
+      "line": 20,
+      "operator": "ARITH",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -17,4 +17,4 @@\n     \"\"\"Calculate final price after discount and tax.\"\"\"\n     discounted = apply_discount(price, discount)\n     tax = calculate_tax(discounted, tax_rate)\n-    return discounted + tax\n+    return discounted - tax\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_checkout.py::test_checkout_process",
+        "tests/test_pricing.py::test_get_final_price"
+      ],
+      "duration_s": 0.19,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 7,
+      "file": "cart.py",
+      "line": 18,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -15,7 +15,7 @@\n     def add_item(self, item_id: str, price: float, quantity: int = 1) -> bool:\n         if reserve_item(item_id, quantity):\n             self.items.append({\"item_id\": item_id, \"price\": price, \"qty\": quantity})\n-            return True\n+            return None\n         return False\n \n     def get_total(self, discount: float = 0.0) -> float:\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_add_item"
+      ],
+      "duration_s": 0.18,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 8,
+      "file": "inventory.py",
+      "line": 11,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -8,7 +8,7 @@\n     return _STOCK.get(item_id, 0)\n \n \n-def reserve_item(item_id: str, quantity: int = 1) -> bool:\n+def reserve_item(item_id: str, quantity: int = 2) -> bool:\n     \"\"\"Reserve inventory for an item.\"\"\"\n     available = check_stock(item_id)\n     if available >= quantity:\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.19,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 9,
+      "file": "pricing.py",
+      "line": 8,
+      "operator": "ARITH",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -5,7 +5,7 @@\n     \"\"\"Apply percentage discount to price.\"\"\"\n     if discount < 0 or discount > 1:\n         raise ValueError(\"Discount must be between 0 and 1\")\n-    return price * (1.0 - discount)\n+    return price * (1.0 + discount)\n \n \n def calculate_tax(price: float, tax_rate: float = 0.1) -> float:\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_total",
+        "tests/test_checkout.py::test_checkout_process",
+        "tests/test_pricing.py::test_apply_discount",
+        "tests/test_pricing.py::test_get_final_price"
+      ],
+      "duration_s": 0.21,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 10,
+      "file": "cart.py",
+      "line": 23,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -20,6 +20,6 @@\n \n     def get_total(self, discount: float = 0.0) -> float:\n         subtotal = sum(item[\"price\"] * item[\"qty\"] for item in self.items)\n-        if discount > 0:\n+        if discount > 1:\n             return apply_discount(subtotal, discount)\n         return subtotal\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_total"
+      ],
+      "duration_s": 0.21,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 11,
+      "file": "inventory.py",
+      "line": 3,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -1,6 +1,6 @@\n \"\"\"Inventory management module for mini_app.\"\"\"\n \n-_STOCK = {\"item_1\": 10, \"item_2\": 5, \"item_3\": 0}\n+_STOCK = {\"item_1\": 11, \"item_2\": 5, \"item_3\": 0}\n \n \n def check_stock(item_id: str) -> int:\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.18,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 12,
+      "file": "pricing.py",
+      "line": 8,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -5,7 +5,7 @@\n     \"\"\"Apply percentage discount to price.\"\"\"\n     if discount < 0 or discount > 1:\n         raise ValueError(\"Discount must be between 0 and 1\")\n-    return price * (1.0 - discount)\n+    return None\n \n \n def calculate_tax(price: float, tax_rate: float = 0.1) -> float:\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_total",
+        "tests/test_checkout.py::test_checkout_process",
+        "tests/test_pricing.py::test_apply_discount",
+        "tests/test_pricing.py::test_get_final_price"
+      ],
+      "duration_s": 0.18,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 13,
+      "file": "inventory.py",
+      "line": 14,
+      "operator": "CMP_FLIP",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -11,7 +11,7 @@\n def reserve_item(item_id: str, quantity: int = 1) -> bool:\n     \"\"\"Reserve inventory for an item.\"\"\"\n     available = check_stock(item_id)\n-    if available >= quantity:\n+    if available > quantity:\n         _STOCK[item_id] -= quantity\n         return True\n     return False\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.17,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 14,
+      "file": "cart.py",
+      "line": 25,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -22,4 +22,4 @@\n         subtotal = sum(item[\"price\"] * item[\"qty\"] for item in self.items)\n         if discount > 0:\n             return apply_discount(subtotal, discount)\n-        return subtotal\n+        return None\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_total",
+        "tests/test_checkout.py::test_checkout_process"
+      ],
+      "duration_s": 0.17,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 15,
+      "file": "utils.py",
+      "line": 6,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/utils.py\n+++ b/utils.py\n@@ -3,4 +3,4 @@\n \n def format_currency(amount: float) -> str:\n     \"\"\"Format float into USD currency representation.\"\"\"\n-    return f\"${amount:.2f}\"\n+    return None\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_checkout.py::test_checkout_process"
+      ],
+      "duration_s": 0.17,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 16,
+      "file": "cart.py",
+      "line": 24,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -21,5 +21,5 @@\n     def get_total(self, discount: float = 0.0) -> float:\n         subtotal = sum(item[\"price\"] * item[\"qty\"] for item in self.items)\n         if discount > 0:\n-            return apply_discount(subtotal, discount)\n+            return None\n         return subtotal\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_total"
+      ],
+      "duration_s": 0.18,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 17,
+      "file": "inventory.py",
+      "line": 16,
+      "operator": "BOOL_NEGATE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -13,5 +13,5 @@\n     available = check_stock(item_id)\n     if available >= quantity:\n         _STOCK[item_id] -= quantity\n-        return True\n+        return False\n     return False\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_add_item",
+        "tests/test_cart.py::test_cart_total",
+        "tests/test_checkout.py::test_checkout_process",
+        "tests/test_inventory.py::test_reserve_item"
+      ],
+      "duration_s": 0.19,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 18,
+      "file": "pricing.py",
+      "line": 6,
+      "operator": "CMP_FLIP",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -3,7 +3,7 @@\n \n def apply_discount(price: float, discount: float) -> float:\n     \"\"\"Apply percentage discount to price.\"\"\"\n-    if discount < 0 or discount > 1:\n+    if discount <= 0 or discount > 1:\n         raise ValueError(\"Discount must be between 0 and 1\")\n     return price * (1.0 - discount)\n \n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.18,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 19,
+      "file": "inventory.py",
+      "line": 8,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -5,7 +5,7 @@\n \n def check_stock(item_id: str) -> int:\n     \"\"\"Return available quantity for item.\"\"\"\n-    return _STOCK.get(item_id, 0)\n+    return None\n \n \n def reserve_item(item_id: str, quantity: int = 1) -> bool:\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_add_item",
+        "tests/test_cart.py::test_cart_total",
+        "tests/test_checkout.py::test_checkout_process",
+        "tests/test_inventory.py::test_check_stock",
+        "tests/test_inventory.py::test_reserve_item"
+      ],
+      "duration_s": 0.19,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 20,
+      "file": "cart.py",
+      "line": 23,
+      "operator": "CMP_FLIP",
+      "diff": "--- a/cart.py\n+++ b/cart.py\n@@ -20,6 +20,6 @@\n \n     def get_total(self, discount: float = 0.0) -> float:\n         subtotal = sum(item[\"price\"] * item[\"qty\"] for item in self.items)\n-        if discount > 0:\n+        if discount >= 0:\n             return apply_discount(subtotal, discount)\n         return subtotal\n",
+      "killed": false,
+      "failed_test_ids": [],
+      "duration_s": 0.25,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 21,
+      "file": "pricing.py",
+      "line": 20,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -17,4 +17,4 @@\n     \"\"\"Calculate final price after discount and tax.\"\"\"\n     discounted = apply_discount(price, discount)\n     tax = calculate_tax(discounted, tax_rate)\n-    return discounted + tax\n+    return None\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_checkout.py::test_checkout_process",
+        "tests/test_pricing.py::test_get_final_price"
+      ],
+      "duration_s": 0.26,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 22,
+      "file": "inventory.py",
+      "line": 17,
+      "operator": "BOOL_NEGATE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -14,4 +14,4 @@\n     if available >= quantity:\n         _STOCK[item_id] -= quantity\n         return True\n-    return False\n+    return True\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_inventory.py::test_reserve_item"
+      ],
+      "duration_s": 0.23,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 23,
+      "file": "inventory.py",
+      "line": 17,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -14,4 +14,4 @@\n     if available >= quantity:\n         _STOCK[item_id] -= quantity\n         return True\n-    return False\n+    return None\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_inventory.py::test_reserve_item"
+      ],
+      "duration_s": 0.25,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 24,
+      "file": "pricing.py",
+      "line": 13,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/pricing.py\n+++ b/pricing.py\n@@ -10,7 +10,7 @@\n \n def calculate_tax(price: float, tax_rate: float = 0.1) -> float:\n     \"\"\"Calculate tax for price.\"\"\"\n-    return price * tax_rate\n+    return None\n \n \n def get_final_price(price: float, discount: float = 0.0, tax_rate: float = 0.1) -> float:\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_checkout.py::test_checkout_process",
+        "tests/test_pricing.py::test_calculate_tax",
+        "tests/test_pricing.py::test_get_final_price"
+      ],
+      "duration_s": 0.2,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 25,
+      "file": "inventory.py",
+      "line": 16,
+      "operator": "RETURN_NONE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -13,5 +13,5 @@\n     available = check_stock(item_id)\n     if available >= quantity:\n         _STOCK[item_id] -= quantity\n-        return True\n+        return None\n     return False\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_cart.py::test_cart_add_item",
+        "tests/test_cart.py::test_cart_total",
+        "tests/test_checkout.py::test_checkout_process",
+        "tests/test_inventory.py::test_reserve_item"
+      ],
+      "duration_s": 0.19,
+      "timed_out": false
+    },
+    {
+      "mutant_id": 26,
+      "file": "inventory.py",
+      "line": 8,
+      "operator": "CONST_OFF_BY_ONE",
+      "diff": "--- a/inventory.py\n+++ b/inventory.py\n@@ -5,7 +5,7 @@\n \n def check_stock(item_id: str) -> int:\n     \"\"\"Return available quantity for item.\"\"\"\n-    return _STOCK.get(item_id, 0)\n+    return _STOCK.get(item_id, 1)\n \n \n def reserve_item(item_id: str, quantity: int = 1) -> bool:\n",
+      "killed": true,
+      "failed_test_ids": [
+        "tests/test_inventory.py::test_check_stock"
+      ],
+      "duration_s": 0.25,
+      "timed_out": false
+    }
+  ]
+}

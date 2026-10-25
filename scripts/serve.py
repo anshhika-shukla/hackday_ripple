@@ -1,4 +1,4 @@
-"""Start a local web server to explore RIPPLE visualizations, pitch deck, and graph."""
+"""Start a local web server for the RIPPLE dashboard, results, impact charts and code maps."""
 
 import http.server
 import socketserver
@@ -35,8 +35,9 @@ def main():
     print(f"Serving workspace: {DIRECTORY}")
     print(f"URL: {url}")
     print(f"  - Dashboard:   {url}/")
-    print(f"  - Impact Map:  {url}/ripple_map.html")
-    print(f"  - Pitch Deck:  {url}/docs/pitch_deck.html")
+    print(f"  - Pick a library:  {url}/#boltons  #click  #mini_app")
+    print(f"  - Your latest check (bash scripts/check.sh <repo>):  {url}/#latest")
+    print(f"  - Results:     {url}/results.html")
     print(f"  - Code Graph:  {url}/graphify-out/graph.html")
     print("=" * 60)
     print("Press Ctrl+C to stop the server.\n")

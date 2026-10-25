@@ -1,0 +1,47 @@
+{
+  "strategy": "C",
+  "import_closure": null,
+  "model": "qwen3:4b-instruct",
+  "tokens_per_sec": 67.8,
+  "suite_size": 315,
+  "n_mutants": 40,
+  "runs": 3,
+  "metrics_per_run": [
+    {
+      "killed_count": 25,
+      "caught_count": 24,
+      "catch_rate": 96.0,
+      "mean_selection_ratio": 99.4,
+      "recall_at_3": 16.0,
+      "recall_at_5": 16.0,
+      "recall_at_10": 20.0
+    },
+    {
+      "killed_count": 25,
+      "caught_count": 24,
+      "catch_rate": 96.0,
+      "mean_selection_ratio": 99.4,
+      "recall_at_3": 16.0,
+      "recall_at_5": 16.0,
+      "recall_at_10": 20.0
+    },
+    {
+      "killed_count": 25,
+      "caught_count": 24,
+      "catch_rate": 96.0,
+      "mean_selection_ratio": 99.4,
+      "recall_at_3": 16.0,
+      "recall_at_5": 16.0,
+      "recall_at_10": 20.0
+    }
+  ],
+  "aggregated": {
+    "killed_count": 25,
+    "caught_count": 24,
+    "catch_rate": 96.0,
+    "mean_selection_ratio": 99.4,
+    "recall_at_3": 16.0,
+    "recall_at_5": 16.0,
+    "recall_at_10": 20.0
+  }
+}

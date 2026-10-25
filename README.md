@@ -7,6 +7,10 @@
 
 > *"Run ~10% of your tests. Catch the bug anyway. Fully offline."*
 
+**In plain words:** before you push a change, RIPPLE tells you which tests it could break. It follows Graphify's map of which functions call which from your change to the tests, runs only those, and a small Qwen3 model on your own laptop explains the change and rates its risk. On the boltons library it ran 8.3% of the tests and still caught 44 of 46 planted bugs. When it cannot trace the code (Click wires itself up at run time), it plays safe and runs nearly everything.
+
+**Team:** Eknoor, Anshika, Vaibhavi
+
 ---
 
 ## 1. Problem Statement & Target User
@@ -49,7 +53,9 @@ eval/: seeded mutants -> ground truth -> score strategies A/B/C
 - **License**: Apache-2.0
 - **Runtime**: Local Ollama runtime (`http://localhost:11434`)
 - **Quantization**: 4-bit (`Q4_K_M`)
-- **External Network Access**: **NONE**. Validated with Wi-Fi switched off.
+- **External Network Access**: none at runtime (Ollama on localhost). Demo verified with Wi-Fi off.
+- **Hardware tested**: Intel Core i7-13700HX, 15.7 GB RAM (7.6 GB visible to WSL2), NVIDIA RTX 4050 Laptop GPU 6 GB, Windows 11 + WSL2 Ubuntu 24.04
+- **Measured**: 4.0B params, 59–73 tokens/sec warm on an NVIDIA RTX 4050 Laptop GPU (6 GB), Ollama 0.31.1
 - **Detailed Specification**: [docs/model_card.md](docs/model_card.md)
 
 ---
@@ -75,7 +81,12 @@ pip install -e .
 
 # 3. Pull local LLM model
 ollama pull qwen3:4b-instruct
+
+# 4. Install Graphify, then clone the evaluation targets (boltons, Click) and build their code graphs
+uv tool install graphifyy
+bash scripts/setup_target.sh
 ```
+Steps 1-4 need internet once; everything after that runs offline.
 
 ### Running RIPPLE
 ```bash
@@ -85,13 +96,13 @@ ripple check
 # Run selected tests in SAFE mode
 ripple check --run
 
-# Run top 10 ranked tests in BUDGET mode (sub-second check)
+# Run only the top 10 ranked tests in BUDGET mode
 ripple check --mode budget --k 10 --run
 
 # Generate standalone SVG ripple map
 ripple map --out ripple_map.html
 
-# Draft regression pytests for uncovered changed functions (Stretch feature)
+# Experimental, not evaluated: draft pytests for changed functions that have no test
 ripple draft-tests --out tests/test_generated.py
 
 # Install as git pre-push hook
@@ -102,26 +113,43 @@ python scripts/serve.py
 ```
 
 ### Automated Demo
-Run the 3-minute evaluation demo:
 ```bash
-bash scripts/demo.sh
+bash scripts/demo.sh            # plants a one-line bug in boltons, RIPPLE selects and runs tests, then restores
+bash scripts/demo.sh mini_app   # same on the tiny shop app in tests/fixtures/mini_app
+```
+
+### Live demo on a project you edit yourself
+```bash
+bash scripts/setup_demo_project.sh                    # examples/canteen -> targets/canteen (8 modules, 44 tests)
+# edit a line in targets/canteen (e.g. loyalty.py), then:
+.venv/bin/python -m ripple.cli check --repo targets/canteen --run
+bash scripts/check.sh targets/canteen                 # same, plus the dashboard's "Your latest check"
+git -C targets/canteen checkout -- .                  # undo the edit
 ```
 
 ---
 
 ## 5. Benchmark Results & Ablation
 
-Evaluated across 30 deterministic AST mutants (seed `1337`):
+We plant one-line bugs (seeded AST mutants on lines the tests execute), run the full suite to learn which tests really catch each one, then check whether RIPPLE's selection would have caught it.
 
-| Strategy | Catch-Rate | Selected / Total | recall@3 | recall@5 | recall@10 |
-|---|---:|---:|---:|---:|---:|
-| **A: Filename heuristic** | 68.2% | 18.5% | 34.1% | 45.5% | 61.4% |
-| **B: Graphify graph only** | 94.7% | 12.3% | 58.3% | 72.2% | 91.7% |
-| **C: Graph + Local LLM (RIPPLE)** | **94.7%** | **12.3%** | **66.7%** | **83.3%** | **94.7%** |
+**boltons 26.2.0** (519 tests; 60 planted bugs, 46 caught by the full suite):
 
-- **Time Saved**: Full test suite: ~14.2s vs RIPPLE subset: ~1.8s (**~72% speedup**).
-- **Ablation Insight**: While Graphify graph analysis ensures safe recall, local LLM ranking significantly boosts `recall@3` and `recall@5` in budget mode, prioritizing the exact breaking test first.
-- **Full Metrics & Repeats**: [docs/results.md](docs/results.md)
+| Strategy | Catch-Rate | Tests run | Failing test in top 3 | in top 10 |
+|---|---:|---:|---:|---:|
+| A: filename heuristic (`tests/test_<module>.py`) | 93.5% | 5.4% | 39.1% | 63.0% |
+| B: Graphify graph only | 82.6% | 1.5% | 69.6% | 80.4% |
+| **B + import fallback (SAFE, default)** | **95.7%** | **8.3%** | 69.6% | 80.4% |
+| C: SAFE + local LLM ranking | 95.7% | 8.3% | 67.4% | 80.4% |
+
+- **Claim we can back**: on boltons, RIPPLE ran 8.3% of the tests and still caught 44 of 46 bugs.
+- **3 runs of C** (no LLM cache): identical (95.7% catch, 67.4% top-3); 70.8 tokens/sec on an RTX 4050 laptop GPU.
+- **Where the AI helps and where it does not**: the model's change summary and risk rating appear in every brief; its test *ranking* adds no lift on boltons (67.4% vs 69.6% top-3) and a small one on Click (20% vs 16% top-10).
+- **Demo bug** (`scripts/demo.sh`): `human_readable_list` returns "oranges and oranges"; RIPPLE selects 34 of 519 tests and catches `test_human_readable_list`, in ~1.5 s total. The full boltons suite took 1.8–6.2 s across our runs on this laptop.
+
+**Limitation, measured on pallets/click 8.1.7** (611 tests; 40 bugs, 25 caught): Click calls into itself dynamically (`CliRunner.invoke(cli)` -> `cli.main()`), so the graph alone catches 12% and the SAFE fallback catches 96% only by running ~99% of tests. RIPPLE plays safe there instead of guessing.
+
+Reproduce: `N=60 bash scripts/run_eval.sh boltons` (also `click`, `mini_app`). Full tables: [docs/results.md](docs/results.md)
 
 ---
 
@@ -129,12 +157,29 @@ Evaluated across 30 deterministic AST mutants (seed `1337`):
 
 - **Core Dependency**: RIPPLE directly uses Graphify's static code graph (`graphify extract . --code-only`) to discover call relations, class hierarchies, and import dependencies.
 - **Graph Schema Documentation**: [docs/graph_schema.md](docs/graph_schema.md)
-- **Repo Graph**: The self-generated Graphify graph of RIPPLE is stored in `graphify-out/` and viewable in `graphify-out/graph.html`.
+- **Repo Graph**: RIPPLE's own Graphify graph is in `graphify-out/` (`graph.html`, `graph.json`, `GRAPH_REPORT.md`), regenerated after the final commit with `bash scripts/graph.sh` (also makes `graph.html` work offline).
+- **Shared in Discord**: yes, [link to our post](TODO-discord-message-link)
+- **Target graphs**: `scripts/setup_target.sh` runs `graphify extract . --code-only` in each target; RIPPLE reads those `graph.json` files. `bash scripts/graph_libs.sh` builds a browsable, offline `graph.html` for each target (opened from the dashboard's library picker).
 
 ---
 
-## 7. License & Attribution
+## 7. Licences
 
-- **RIPPLE Code**: MIT License ([LICENSE](LICENSE))
-- **Qwen3**: Apache-2.0
-- **Click (Target Repo)**: BSD-3-Clause
+- **RIPPLE code**: MIT ([LICENSE](LICENSE))
+
+**Third-party and model licences**
+
+| Component | Role | Licence |
+|---|---|---|
+| Qwen3 4B (`qwen3:4b-instruct`) | local model | Apache-2.0 |
+| Ollama | model runtime | MIT |
+| Graphify (`graphifyy`) | code graph | Apache-2.0 |
+| networkx | graph traversal | BSD-3-Clause |
+| pydantic | schema validation | MIT |
+| ollama (Python client) | model calls | MIT |
+| pytest, pytest-xdist | test runner | MIT |
+| coverage | evaluation harness | Apache-2.0 |
+| rich | terminal output | MIT |
+| vis-network 9.1.6 (bundled in `graphify-out/`) | code graph viewer | Apache-2.0 OR MIT |
+| boltons | evaluation/demo target (not redistributed) | BSD-3-Clause |
+| Click | evaluation target (not redistributed) | BSD-3-Clause |

@@ -1,0 +1,11 @@
+--- a/boltons/strutils.py
++++ b/boltons/strutils.py
+@@ -1324,7 +1324,7 @@
+         return items[0]
+ 
+     if len(items) == 2:
+-        return f'{items[0]} {conjunction} {items[1]}'
++        return f'{items[1]} {conjunction} {items[1]}'
+ 
+     return f'{delimiter.join(items[:-1])}{delimiter if oxford else " "}{conjunction} {items[-1]}'
+ 

@@ -9,8 +9,8 @@ from pathlib import Path
 class RippleConfig:
     model: str = "qwen3:4b-instruct"
     ollama_host: str = "http://localhost:11434"
-    target_repo: str = "targets/click"
-    graph_path: str = "targets/click/graphify-out/graph.json"
+    target_repo: str = "targets/boltons"
+    graph_path: str = "targets/boltons/graphify-out/graph.json"
     mode: str = "safe"  # safe | budget
     budget_k: int = 10
     timeout_s: float = 30.0
@@ -20,10 +20,10 @@ class RippleConfig:
         return cls(
             model=os.getenv("RIPPLE_MODEL", "qwen3:4b-instruct"),
             ollama_host=os.getenv("OLLAMA_HOST", "http://localhost:11434"),
-            target_repo=os.getenv("TARGET_REPO", "targets/click"),
+            target_repo=os.getenv("TARGET_REPO", "targets/boltons"),
             graph_path=os.getenv(
                 "GRAPH_PATH",
-                str(Path(os.getenv("TARGET_REPO", "targets/click")) / "graphify-out" / "graph.json"),
+                str(Path(os.getenv("TARGET_REPO", "targets/boltons")) / "graphify-out" / "graph.json"),
             ),
             mode=os.getenv("RIPPLE_MODE", "safe"),
             budget_k=int(os.getenv("RIPPLE_BUDGET_K", "10")),

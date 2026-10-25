@@ -1,0 +1,45 @@
+{
+  "mode": "safe",
+  "model": "qwen3:4b-instruct",
+  "llm_status": "ok",
+  "changed": [
+    {
+      "file": "boltons/strutils.py",
+      "qualname": "human_readable_list",
+      "kind": "function",
+      "changed_lines": [
+        1327
+      ],
+      "ast_equal": false,
+      "old_src": null,
+      "new_src": null,
+      "node_id": null
+    }
+  ],
+  "candidates_total": 34,
+  "selected": 34,
+  "suite_total": 519,
+  "results": {
+    "passed": 34,
+    "failed": 1,
+    "skipped": 0,
+    "failed_ids": [
+      "tests/test_strutils.py::test_human_readable_list"
+    ]
+  },
+  "timing": {
+    "graph_s": 0.059,
+    "llm_s": 2.273,
+    "tests_s": 0.606,
+    "full_suite_s": 2.44
+  },
+  "tokens_per_sec": 49.25,
+  "guardrails_fired": [
+    "G1"
+  ],
+  "triage": {
+    "change_kind": "behavior",
+    "risk": 3,
+    "summary": "Modified human_readable_list to incorrectly repeat items[1] in the output, potentially breaking expected behavior for lists with two or more items."
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "mode": "safe",
+  "model": "qwen3:4b-instruct",
+  "llm_status": "ok",
+  "changed": [
+    {
+      "file": "src/click/formatting.py",
+      "qualname": "HelpFormatter.write_dl",
+      "kind": "method",
+      "changed_lines": [
+        243
+      ],
+      "ast_equal": false,
+      "old_src": null,
+      "new_src": null,
+      "node_id": null
+    }
+  ],
+  "candidates_total": 313,
+  "selected": 313,
+  "suite_total": 611,
+  "results": {
+    "passed": 586,
+    "failed": 1,
+    "skipped": 22,
+    "failed_ids": [
+      "tests/test_options.py::test_option_help_preserve_paragraphs"
+    ]
+  },
+  "timing": {
+    "graph_s": 0.024,
+    "llm_s": 1.274,
+    "tests_s": 0.734,
+    "full_suite_s": 0.74
+  },
+  "tokens_per_sec": 65.94,
+  "guardrails_fired": [
+    "G1"
+  ],
+  "triage": {
+    "change_kind": "behavior",
+    "risk": 3,
+    "summary": "Modified HelpFormatter.write_dl to disable paragraph preservation in text wrapping, potentially altering output formatting of help text."
+  }
+}

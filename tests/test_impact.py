@@ -86,7 +86,8 @@ def test_import_closure_adds_tests_when_call_edge_missing():
     """Remove a call edge in the fixture graph -> test still found via import closure."""
     graph = get_mini_app_graph()
     # Remove direct call edge from test_apply_discount
-    edge_to_remove = ("tests/test_pricing.py::test_apply_discount", "pricing.py::apply_discount")
+    edge_to_remove = ("tests_test_pricing_test_apply_discount", "pricing_apply_discount")
+    assert graph.g.has_edge(*edge_to_remove)
     if graph.g.has_edge(*edge_to_remove):
         graph.g.remove_edge(*edge_to_remove)
 

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RIPPLE Change Story</title>
+  <style>
+    :root { color-scheme: light; --page: #f9f9f7; --surface: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --grid: #e1e0d9; --border: rgba(11,11,11,0.10); --code-bg: #f0efec; --test: #2a78d6; --change: #eb6834; --other: #c3c2b7; }
+    @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --test: #3987e5; --change: #d95926; --other: #52514e; } }
+    :root[data-theme="dark"] { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --test: #3987e5; --change: #d95926; --other: #52514e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 20px 16px 40px; background: var(--page); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .wrap { max-width: 1200px; margin: 0 auto; }
+    h1 { margin: 0 0 4px; font-size: 24px; }
+    h1 span { color: var(--test); }
+    code { font-family: ui-monospace, monospace; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+    .stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 10px; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; }
+    .k { font-size: 13px; color: var(--ink-2); }
+    .v { font-size: 20px; }
+    .v.small { font-size: 15px; padding-top: 4px; }
+    .caught-v { color: var(--test); font-weight: 700; }
+    .d, .muted { font-size: 14px; color: var(--ink-2); }
+    .model { font-size: 15px; margin-bottom: 8px; line-height: 1.45; }
+    .model .k { margin-right: 6px; }
+    .summary { font-size: 19px; margin: 14px 0 16px; max-width: 1000px; }
+    .story { display: grid; grid-template-columns: minmax(180px, 1fr) 28px minmax(220px, 1.4fr) 28px minmax(300px, 2.2fr); gap: 8px; align-items: start; }
+    .col { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+    .col h2 { margin: 0 0 10px; font-size: 16px; }
+    .col h2 i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; }
+    .arrow { align-self: center; text-align: center; font-size: 26px; color: var(--ink-2); }
+    .changed-box { border: 2px solid var(--change); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+    .changed-box code { font-size: 16px; font-weight: 600; background: none; padding: 0; }
+    .step-row { margin-bottom: 10px; }
+    .step-k { font-size: 13px; color: var(--ink-2); margin-bottom: 4px; }
+    .chip { display: inline-block; font: 13px ui-monospace, monospace; background: var(--code-bg); border-radius: 999px; padding: 2px 9px; margin: 0 4px 4px 0; }
+    .chip.more { font-family: system-ui, sans-serif; color: var(--ink-2); }
+    .file { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+    .file.hit { border: 2px solid var(--change); }
+    .file.rest { color: var(--ink-2); font-size: 14px; }
+    .fname { font: 600 15px ui-monospace, monospace; overflow-wrap: anywhere; }
+    .bar { display: flex; gap: 2px; height: 10px; margin: 6px 0 4px; }
+    .seg { display: block; height: 100%; border-radius: 3px; }
+    .seg.g { background: var(--test); }
+    .seg.s { background: var(--other); }
+    .counts { font-size: 14px; color: var(--ink-2); }
+    .caught { margin-top: 6px; font-size: 14px; color: var(--change); font-weight: 600; }
+    details { margin-top: 6px; font-size: 14px; }
+    summary { cursor: pointer; color: var(--ink-2); }
+    ul { margin: 6px 0 0; padding-left: 18px; }
+    li { margin-bottom: 3px; }
+    .via { color: var(--ink-2); margin-left: 6px; font-size: 13px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 18px; font-size: 14px; color: var(--ink-2); margin: 0 0 10px; }
+    .legend i { display: inline-block; width: 22px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
+    .note { font-size: 14px; color: var(--ink-2); margin-top: 14px; max-width: 1000px; }
+    @media (max-width: 900px) { .story { grid-template-columns: 1fr; } .arrow { transform: rotate(90deg); } }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <h1><span>RIPPLE</span> · what your change could break</h1>
+  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>313</strong> test functions</span><span class="d">pytest ran 609 of 611 test cases (99.7%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught-v">✓ Bug caught</span><span class="d">1 test failed, 586 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.02 s · AI 1.27 s · running them 0.73 s · all tests 0.74 s</span></div></div>
+  <div class="model"><span class="k">The AI's read</span> <strong>Risk 3/5.</strong> Modified HelpFormatter.write_dl to disable paragraph preservation in text wrapping, potentially altering output formatting of help text.</div>
+  <p class="summary">RIPPLE followed the code from <code>HelpFormatter.write_dl</code> to <strong>26</strong> tests, and ran <strong>287</strong> more from files that import the changed code, to be safe. <strong>1</strong> failed, so the bug was caught before it shipped.</p>
+  <div class="story">
+    <div class="col"><h2><i style="background:var(--change)"></i>1 · Your change</h2><div class="changed-box"><code>HelpFormatter.write_dl</code><div class="muted">src/click/formatting.py</div></div></div>
+    <div class="arrow">→</div>
+    <div class="col"><h2><i style="background:#898781"></i>2 · Code that uses it</h2><div class="step-row"><div class="step-k">1 step away</div><div><span class="chip">HelpFormatter</span><span class="chip">format_commands</span><span class="chip">format_options</span></div></div><div class="step-row"><div class="step-k">2 steps away</div><div><span class="chip">Command</span><span class="chip">Context</span><span class="chip">MultiCommand</span><span class="chip">format_epilog</span><span class="chip">format_help</span><span class="chip">format_help_text</span><span class="chip">format_options</span><span class="chip">format_usage</span><span class="chip">make_formatter</span></div></div><div class="step-row"><div class="step-k">3 steps away</div><div><span class="chip">CommandCollection</span><span class="chip">Group</span><span class="chip">__init__</span><span class="chip">_is_incomplete_argument</span><span class="chip">_is_incomplete_option</span><span class="chip">_param_memo</span><span class="chip">_resolve_context</span><span class="chip">_resolve_incomplete</span><span class="chip">_start_of_option</span><span class="chip">add_command</span><span class="chip more">+32 more</span></div></div></div>
+    <div class="arrow">→</div>
+    <div class="col"><h2><i style="background:var(--test)"></i>3 · Test files RIPPLE ran</h2>
+      <div class="legend"><span><i style="background:var(--test)"></i>found by following the code</span><span><i style="background:var(--other)"></i>run to be safe</span></div>
+      <div class="file hit"><div class="fname">tests/test_options.py</div><div class="bar" title="0 found by following the code, 58 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:100.0%"></i></div><div class="counts">58 run to be safe</div><div class="caught">✗ <code>test_option_help_preserve_paragraphs</code> failed: this test caught the bug</div></div><div class="file"><div class="fname">tests/test_shell_completion.py</div><div class="bar" title="26 found by following the code, 4 run to be safe"><i class="seg g" style="width:44.8%"></i><i class="seg s" style="width:6.9%"></i></div><div class="counts"><strong>26</strong> found by following the code · 4 run to be safe</div><details><summary>Show the 26 tests found by following the code</summary><ul><li><code>test_absolute_path</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_add_different_name</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_argument_default</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_argument_nargs</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_argument_order</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_chained</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_choice_case_sensitive</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_choice_conflicting_prefix</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_choice_special_characters</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_command</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_context_settings</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_double_dash</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_full_complete</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_full_source</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_group</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_group_command_same_option</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_help_option</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_hidden</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_option_count</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_option_custom</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_option_flag</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_option_multiple</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_option_nargs</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_option_optional</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_path_types</code><span class="via">via HelpFormatter › Command</span></li><li><code>test_type_choice</code><span class="via">via HelpFormatter › Command</span></li></ul></details></div><div class="file"><div class="fname">tests/test_termui.py</div><div class="bar" title="0 found by following the code, 29 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:50.0%"></i></div><div class="counts">29 run to be safe</div></div><div class="file"><div class="fname">tests/test_basic.py</div><div class="bar" title="0 found by following the code, 27 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:46.6%"></i></div><div class="counts">27 run to be safe</div></div><div class="file"><div class="fname">tests/test_utils.py</div><div class="bar" title="0 found by following the code, 27 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:46.6%"></i></div><div class="counts">27 run to be safe</div></div><div class="file"><div class="fname">tests/test_arguments.py</div><div class="bar" title="0 found by following the code, 26 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:44.8%"></i></div><div class="counts">26 run to be safe</div></div><div class="file"><div class="fname">tests/test_commands.py</div><div class="bar" title="0 found by following the code, 20 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:34.5%"></i></div><div class="counts">20 run to be safe</div></div><div class="file"><div class="fname">tests/test_testing.py</div><div class="bar" title="0 found by following the code, 19 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:32.8%"></i></div><div class="counts">19 run to be safe</div></div><div class="file"><div class="fname">tests/test_context.py</div><div class="bar" title="0 found by following the code, 18 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:31.0%"></i></div><div class="counts">18 run to be safe</div></div><div class="file"><div class="fname">tests/test_formatting.py</div><div class="bar" title="0 found by following the code, 17 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:29.3%"></i></div><div class="counts">17 run to be safe</div></div><div class="file"><div class="fname">tests/test_chain.py</div><div class="bar" title="0 found by following the code, 9 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:15.5%"></i></div><div class="counts">9 run to be safe</div></div><div class="file"><div class="fname">tests/test_types.py</div><div class="bar" title="0 found by following the code, 9 run to be safe"><i class="seg g" style="width:0.0%"></i><i class="seg s" style="width:15.5%"></i></div><div class="counts">9 run to be safe</div></div><div class="file rest">… and 6 more test files (24 tests), all run to be safe.</div>
+    </div>
+  </div>
+  <p class="note">How RIPPLE chose: it starts at your change and follows Graphify's code map to everything that uses it, up to 3 steps away. Tests reached that way are “found by following the code”. A map read from the source can miss links made while the program runs, so RIPPLE also runs every test file that imports the changed file (“run to be safe”). The AI never removes tests.</p>
+</div>
+</body>
+</html>

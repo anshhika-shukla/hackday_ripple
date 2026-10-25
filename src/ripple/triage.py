@@ -11,9 +11,10 @@ from ripple.llm import OllamaClient
 
 
 class Triage(BaseModel):
-    change_kind: Literal["behavior", "signature", "refactor", "docs_or_format", "unknown"] = "behavior"
-    risk: int = Field(default=3, ge=1, le=5)
-    summary: str = Field(default="", max_length=240)
+    # Required (no defaults) so the JSON schema sent to Ollama forces the model to fill them in.
+    change_kind: Literal["behavior", "signature", "refactor", "docs_or_format", "unknown"]
+    risk: int = Field(ge=1, le=5)
+    summary: str = Field(min_length=1, max_length=240)
     suspicious_points: list[str] = Field(default_factory=list)
 
 

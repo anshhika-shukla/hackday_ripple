@@ -33,9 +33,12 @@ class OllamaClient:
     ):
         self.model = model or os.getenv("RIPPLE_MODEL", "qwen3:4b-instruct")
         self.host = host or os.getenv("OLLAMA_HOST", "http://localhost:11434")
-        self.cache_dir = cache_dir or Path(".ripple_cache")
-        self.log_path = log_path or Path("runs.jsonl")
+        # Kept outside the target repo so RIPPLE never writes into it (G6).
+        state_dir = Path(os.getenv("RIPPLE_STATE_DIR", Path.home() / ".cache" / "ripple"))
+        self.cache_dir = cache_dir or state_dir / "llm_cache"
+        self.log_path = log_path or state_dir / "runs.jsonl"
         self._client = ollama.Client(host=self.host) if ollama else None
+        self.token_rates: list[float] = []
 
     def _get_cache(self, key: str) -> str | None:
         if not self.cache_dir.exists():
@@ -62,6 +65,8 @@ class OllamaClient:
                 if eval_count and eval_duration_ns > 0
                 else 0.0
             )
+            if tokens_per_sec > 0:
+                self.token_rates.append(tokens_per_sec)
             record = {
                 "timestamp": time.time(),
                 "model": self.model,
@@ -70,6 +75,7 @@ class OllamaClient:
                 "tokens_per_sec": tokens_per_sec,
                 "success": success,
             }
+            self.log_path.parent.mkdir(parents=True, exist_ok=True)
             with self.log_path.open("a", encoding="utf-8") as f:
                 f.write(json.dumps(record) + "\n")
         except Exception:

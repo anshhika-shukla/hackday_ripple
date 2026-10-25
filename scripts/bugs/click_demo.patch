@@ -1,0 +1,11 @@
+--- a/src/click/formatting.py
++++ b/src/click/formatting.py
+@@ -240,7 +240,7 @@
+                 self.write(" " * (first_col + self.current_indent))
+ 
+             text_width = max(self.width - first_col - 2, 10)
+-            wrapped_text = wrap_text(second, text_width, preserve_paragraphs=True)
++            wrapped_text = wrap_text(second, text_width, preserve_paragraphs=False)
+             lines = wrapped_text.splitlines()
+ 
+             if lines:

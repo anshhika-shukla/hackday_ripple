@@ -1,0 +1,47 @@
+{
+  "mode": "safe",
+  "model": "qwen3:4b-instruct",
+  "llm_status": "ok",
+  "changed": [
+    {
+      "file": "pricing.py",
+      "qualname": "apply_discount",
+      "kind": "function",
+      "changed_lines": [
+        8
+      ],
+      "ast_equal": false,
+      "old_src": null,
+      "new_src": null,
+      "node_id": null
+    }
+  ],
+  "candidates_total": 6,
+  "selected": 6,
+  "suite_total": 8,
+  "results": {
+    "passed": 2,
+    "failed": 4,
+    "failed_ids": [
+      "tests/test_pricing.py::test_apply_discount",
+      "tests/test_cart.py::test_cart_total",
+      "tests/test_pricing.py::test_get_final_price",
+      "tests/test_checkout.py::test_checkout_process"
+    ]
+  },
+  "timing": {
+    "graph_s": 0.004,
+    "llm_s": 1.874,
+    "tests_s": 0.184,
+    "full_suite_s": 3.0
+  },
+  "tokens_per_sec": 70.23,
+  "guardrails_fired": [
+    "G1"
+  ],
+  "triage": {
+    "change_kind": "behavior",
+    "risk": 3,
+    "summary": "The `apply_discount` function now adds the discount instead of subtracting it, which reverses the intended behavior. This change has a moderate risk of breaking callers who expect discount to reduce the price."
+  }
+}
