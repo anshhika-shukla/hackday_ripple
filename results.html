@@ -1115,7 +1115,54 @@ const DATA = [
    }
   },
   "model_runs": 3,
-  "demo": null
+  "demo": {
+   "mode": "safe",
+   "model": "qwen3:4b-instruct",
+   "llm_status": "ok",
+   "changed": [
+    {
+     "file": "src/click/formatting.py",
+     "qualname": "HelpFormatter.write_dl",
+     "kind": "method",
+     "changed_lines": [
+      243
+     ],
+     "ast_equal": false,
+     "old_src": null,
+     "new_src": null,
+     "node_id": null
+    }
+   ],
+   "candidates_total": 313,
+   "selected": 313,
+   "suite_total": 611,
+   "results": {
+    "passed": 586,
+    "failed": 1,
+    "skipped": 22,
+    "failed_ids": [
+     "tests/test_options.py::test_option_help_preserve_paragraphs"
+    ]
+   },
+   "timing": {
+    "graph_s": 0.024,
+    "llm_s": 1.274,
+    "tests_s": 0.734,
+    "full_suite_s": 0.74
+   },
+   "tokens_per_sec": 65.94,
+   "guardrails_fired": [
+    "G1"
+   ],
+   "triage": {
+    "change_kind": "behavior",
+    "risk": 3,
+    "summary": "Modified HelpFormatter.write_dl to disable paragraph preservation in text wrapping, potentially altering output formatting of help text."
+   },
+   "before": "wrapped_text = wrap_text(second, text_width, preserve_paragraphs=True)",
+   "after": "wrapped_text = wrap_text(second, text_width, preserve_paragraphs=False)",
+   "map": "eval/results/click/demo_map.html"
+  }
  },
  {
   "title": "Mini shop app",
@@ -1492,6 +1539,7 @@ function render(key) {
   if (t.demo) {
     const d = t.demo, r = d.results || {}, tri = d.triage || {}, tm = d.timing || {};
     const ch = (d.changed || [])[0] || {};
+    const cases = (r.passed || 0) + (r.failed || 0) + (r.skipped || 0);  // functions expand into pytest cases
     const caught = (r.failed_ids || []).map(id => `<code>${esc(shortTest(id))}</code>`).join(", ");
     const model = d.llm_status === "ok" && tri.summary
       ? `Risk ${esc(tri.risk)}/5. “${esc(tri.summary)}”`
@@ -1504,7 +1552,7 @@ function render(key) {
       <div class="demo-steps">
         <div class="step"><div class="n">1 · The change</div>A one-line bug in <code>${esc(ch.qualname)}</code> (${esc(ch.file)}):
           <div class="code"><span class="del">- ${esc(d.before)}</span>\n<span class="add">+ ${esc(d.after)}</span></div></div>
-        <div class="step"><div class="n">2 · Tests chosen</div><div class="tile" style="border:0;padding:0;background:none"><div class="v">${d.selected} <span style="font-size:18px;font-weight:400">of ${d.suite_total}</span></div><div class="d">test cases (${pct(100 * d.selected / Math.max(d.suite_total, 1))})</div></div></div>
+        <div class="step"><div class="n">2 · Tests chosen</div><div class="tile" style="border:0;padding:0;background:none"><div class="v">${d.selected} <span style="font-size:18px;font-weight:400">test functions</span></div><div class="d">pytest ran ${cases} of ${d.suite_total} test cases (${pct(100 * cases / Math.max(d.suite_total, 1))})</div></div></div>
         <div class="step"><div class="n">3 · Result</div>${r.failed ? `<span class="verdict ok">✓ Bug caught</span> by ${caught}` : `<span class="verdict no">No test failed</span>`}<div class="d" style="margin-top:6px;color:var(--ink-2);font-size:14px">${esc(time)}</div></div>
         <div class="step"><div class="n">4 · The AI's read</div>${model}</div>
       </div>

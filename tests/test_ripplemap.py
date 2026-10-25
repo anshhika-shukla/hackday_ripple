@@ -120,7 +120,8 @@ def test_header_uses_suite_total_and_marks_failures():
         report=report,
     )
 
-    assert f"<strong>{len(candidates)}</strong> of 18" in html_doc
+    assert f"<strong>{len(candidates)}</strong> test functions" in html_doc
+    assert "pytest ran 6 of 18 test cases" in html_doc
     assert "✓ caught the bug" in html_doc
     assert "Discount applied twice." in html_doc
     assert "Risk 4/5" in html_doc

@@ -47,7 +47,7 @@
 <body>
   <h1><span>RIPPLE</span> · how one change spreads to the tests</h1>
   <div class="changed">You changed <code>apply_discount</code> in pricing.py</div>
-  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>6</strong> of 8 (75.0%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught">✓ Bug caught</span><span class="d">4 tests failed, 2 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.00 s · AI 1.87 s · running them 0.18 s · all tests 3.00 s</span></div></div>
+  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>6</strong> test functions</span><span class="d">pytest ran 6 of 8 test cases (75.0%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught">✓ Bug caught</span><span class="d">4 tests failed, 2 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.00 s · AI 1.87 s · running them 0.18 s · all tests 3.00 s</span></div></div>
   <div class="model"><span class="k">The AI's read</span> <strong>Risk 3/5.</strong> The `apply_discount` function now adds the discount instead of subtracting it, which reverses the intended behavior. This change has a moderate risk of breaking callers who expect discount to reduce the price.</div>
   <div class="model"><span class="k">Caught by</span> <code>tests/test_cart.py::test_cart_total</code> <code>tests/test_checkout.py::test_checkout_process</code> <code>tests/test_pricing.py::test_apply_discount</code> <code>tests/test_pricing.py::test_get_final_price</code></div>
   <div class="legend">

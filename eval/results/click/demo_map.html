@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RIPPLE Change Map</title>
+  <style>
+    :root { color-scheme: light; --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --grid: #e1e0d9; --border: rgba(11,11,11,0.10); --code-bg: #f0efec; --pill: #ffffff; }
+    @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --pill: #262624; } }
+    :root[data-theme="dark"] { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --pill: #262624; }
+    body { margin: 0; padding: 20px 24px; background: var(--page); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    h1 { margin: 0 0 4px; font-size: 24px; }
+    h1 span { color: #2a78d6; }
+    .changed { color: var(--ink-2); font-size: 16px; margin-bottom: 14px; }
+    code { font-family: ui-monospace, monospace; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+    .stats { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; }
+    .k { font-size: 13px; color: var(--ink-2); }
+    .v { font-size: 20px; }
+    .v.small { font-size: 15px; padding-top: 4px; }
+    .v.caught { color: #2a78d6; font-weight: 700; }
+    .d { font-size: 13px; color: var(--ink-2); }
+    .model { font-size: 15px; margin-bottom: 8px; max-width: 1100px; line-height: 1.45; }
+    .model .k { margin-right: 6px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 10px 0; font-size: 14px; color: var(--ink-2); }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .dot { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
+    .chip { width: 24px; height: 13px; border-radius: 7px; display: inline-block; border: 1.5px dashed var(--ink-2); }
+    .container { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+    svg { display: block; width: 100%; height: calc(100vh - 300px); min-height: 460px; }
+    svg .ring { fill: none; stroke: var(--grid); stroke-width: 2; }
+    svg .ring-fallback { stroke: var(--ink-2); stroke-opacity: 0.5; stroke-dasharray: 8 8; }
+    svg .ring-label { fill: var(--ink-2); font-size: 16px; font-family: system-ui, sans-serif; paint-order: stroke; stroke: var(--surface); stroke-width: 6px; }
+    svg .edge { stroke: var(--ink-2); stroke-opacity: 0.6; stroke-width: 2; }
+    svg .edge-fallback { stroke: var(--ink-2); stroke-opacity: 0.35; stroke-width: 1.5; stroke-dasharray: 4 6; }
+    svg .node { stroke-linejoin: round; }
+    svg .label { fill: var(--ink); font-size: 22px; font-weight: 600; font-family: system-ui, sans-serif; paint-order: stroke; stroke: var(--surface); stroke-width: 6px; }
+    svg .label-center { font-size: 24px; }
+    svg .failed { fill: #2a78d6; font-weight: 700; }
+    svg .pill { fill: var(--pill); stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    svg .pill-graph { stroke: #2a78d6; stroke-dasharray: none; }
+    svg .pill-failed { stroke: #eb6834; stroke-width: 3; stroke-dasharray: none; }
+    svg .pill-text { fill: var(--ink); font-size: 19px; font-family: system-ui, sans-serif; }
+    .note { font-size: 14px; color: var(--ink-2); margin-top: 8px; max-width: 1100px; }
+  </style>
+</head>
+<body>
+  <h1><span>RIPPLE</span> · how one change spreads to the tests</h1>
+  <div class="changed">You changed <code>HelpFormatter.write_dl</code> in src/click/formatting.py</div>
+  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>313</strong> test functions</span><span class="d">pytest ran 609 of 611 test cases (99.7%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught">✓ Bug caught</span><span class="d">1 test failed, 586 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.02 s · AI 1.27 s · running them 0.73 s · all tests 0.74 s</span></div></div>
+  <div class="model"><span class="k">The AI's read</span> <strong>Risk 3/5.</strong> Modified HelpFormatter.write_dl to disable paragraph preservation in text wrapping, potentially altering output formatting of help text.</div>
+  <div class="model"><span class="k">Caught by</span> <code>tests/test_options.py::test_option_help_preserve_paragraphs</code></div>
+  <div class="legend">
+    <span><i class="dot" style="background:#eb6834"></i> Your change</span>
+    <span><i class="dot" style="background:#898781"></i> Code that uses it</span>
+    <span><i class="dot" style="background:#2a78d6"></i> Test that checks it</span>
+    <span><i class="dot" style="background:#2a78d6;box-shadow:0 0 0 3px #eb6834"></i> Test that caught the bug</span>
+    <span><i class="chip"></i> More tests run to be safe</span>
+  </div>
+  <div class="container">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-867 -819 1620 1453">
+  <g id="guides"><circle cx="0" cy="0" r="110" class="ring" /><text x="0" y="-110" dy="0.35em" text-anchor="middle" class="ring-label">1</text><circle cx="0" cy="0" r="220" class="ring" /><text x="0" y="-220" dy="0.35em" text-anchor="middle" class="ring-label">2</text><circle cx="0" cy="0" r="330" class="ring" /><text x="0" y="-330" dy="0.35em" text-anchor="middle" class="ring-label">3</text><circle cx="0" cy="0" r="396" class="ring ring-fallback" /></g>
+  <g id="edges"><line x1="207.9" y1="-72.0" x2="15.7" y2="-329.6" class="edge" /><line x1="89.6" y1="63.8" x2="207.9" y2="-72.0" class="edge" /><line x1="0.0" y1="0.0" x2="89.6" y2="63.8" class="edge" /><line x1="207.9" y1="-72.0" x2="47.0" y2="-326.6" class="edge" /><line x1="207.9" y1="-72.0" x2="77.8" y2="-320.7" class="edge" /><line x1="207.9" y1="-72.0" x2="107.9" y2="-311.9" class="edge" /><line x1="207.9" y1="-72.0" x2="137.1" y2="-300.2" class="edge" /><line x1="207.9" y1="-72.0" x2="165.0" y2="-285.8" class="edge" /><line x1="207.9" y1="-72.0" x2="191.4" y2="-268.8" class="edge" /><line x1="207.9" y1="-72.0" x2="216.1" y2="-249.4" class="edge" /><line x1="207.9" y1="-72.0" x2="238.8" y2="-227.7" class="edge" /><line x1="207.9" y1="-72.0" x2="259.4" y2="-204.0" class="edge" /><line x1="207.9" y1="-72.0" x2="277.6" y2="-178.4" class="edge" /><line x1="207.9" y1="-72.0" x2="293.3" y2="-151.2" class="edge" /><line x1="207.9" y1="-72.0" x2="306.4" y2="-122.6" class="edge" /><line x1="207.9" y1="-72.0" x2="316.6" y2="-93.0" class="edge" /><line x1="207.9" y1="-72.0" x2="324.0" y2="-62.5" class="edge" /><line x1="207.9" y1="-72.0" x2="328.5" y2="-31.4" class="edge" /><line x1="207.9" y1="-72.0" x2="330.0" y2="0.0" class="edge" /><line x1="207.9" y1="-72.0" x2="328.5" y2="31.4" class="edge" /><line x1="207.9" y1="-72.0" x2="324.0" y2="62.5" class="edge" /><line x1="207.9" y1="-72.0" x2="316.6" y2="93.0" class="edge" /><line x1="207.9" y1="-72.0" x2="306.4" y2="122.6" class="edge" /><line x1="207.9" y1="-72.0" x2="293.3" y2="151.2" class="edge" /><line x1="207.9" y1="-72.0" x2="277.6" y2="178.4" class="edge" /><line x1="207.9" y1="-72.0" x2="259.4" y2="204.0" class="edge" /><line x1="207.9" y1="-72.0" x2="238.8" y2="227.7" class="edge" /><line x1="207.9" y1="-72.0" x2="216.1" y2="249.4" class="edge" /><line x1="0.0" y1="0.0" x2="-108.0" y2="20.8" class="edge" /><line x1="0.0" y1="0.0" x2="-105.5" y2="31.0" class="edge" /><line x1="89.6" y1="63.8" x2="-144.1" y2="166.3" class="edge" /><line x1="89.6" y1="63.8" x2="-159.2" y2="151.8" class="edge" /><line x1="89.6" y1="63.8" x2="-172.9" y2="136.0" class="edge" /><line x1="89.6" y1="63.8" x2="-195.5" y2="100.8" class="edge" /><line x1="89.6" y1="63.8" x2="10.5" y2="219.8" class="edge" /><line x1="89.6" y1="63.8" x2="-204.2" y2="81.8" class="edge" /><line x1="89.6" y1="63.8" x2="-127.6" y2="179.2" class="edge" /><line x1="89.6" y1="63.8" x2="-185.1" y2="118.9" class="edge" /><line x1="10.5" y1="219.8" x2="191.4" y2="268.8" class="edge" /><line x1="10.5" y1="219.8" x2="137.1" y2="300.2" class="edge" /><line x1="10.5" y1="219.8" x2="-15.7" y2="329.6" class="edge" /><line x1="10.5" y1="219.8" x2="107.9" y2="311.9" class="edge" /><line x1="10.5" y1="219.8" x2="15.7" y2="329.6" class="edge" /><line x1="10.5" y1="219.8" x2="-47.0" y2="326.6" class="edge" /><line x1="10.5" y1="219.8" x2="-77.8" y2="320.7" class="edge" /><line x1="10.5" y1="219.8" x2="-107.9" y2="311.9" class="edge" /><line x1="10.5" y1="219.8" x2="-137.1" y2="300.2" class="edge" /><line x1="10.5" y1="219.8" x2="-165.0" y2="285.8" class="edge" /><line x1="10.5" y1="219.8" x2="165.0" y2="285.8" class="edge" /><line x1="-159.2" y1="151.8" x2="-238.8" y2="227.7" class="edge" /><line x1="10.5" y1="219.8" x2="77.8" y2="320.7" class="edge" /><line x1="10.5" y1="219.8" x2="47.0" y2="326.6" class="edge" /><line x1="0" y1="0" x2="-394.2" y2="37.6" class="edge edge-fallback" /><line x1="0" y1="0" x2="-396.0" y2="0.0" class="edge edge-fallback" /><line x1="0" y1="0" x2="-394.2" y2="-37.6" class="edge edge-fallback" /><line x1="0" y1="0" x2="-388.8" y2="-74.9" class="edge edge-fallback" /><line x1="0" y1="0" x2="-380.0" y2="-111.6" class="edge edge-fallback" /><line x1="0" y1="0" x2="-367.6" y2="-147.2" class="edge edge-fallback" /><line x1="0" y1="0" x2="-352.0" y2="-181.5" class="edge edge-fallback" /><line x1="0" y1="0" x2="-333.1" y2="-214.1" class="edge edge-fallback" /><line x1="0" y1="0" x2="-311.3" y2="-244.8" class="edge edge-fallback" /><line x1="0" y1="0" x2="-286.6" y2="-273.3" class="edge edge-fallback" /><line x1="0" y1="0" x2="-259.3" y2="-299.3" class="edge edge-fallback" /><line x1="0" y1="0" x2="-229.7" y2="-322.6" class="edge edge-fallback" /><line x1="0" y1="0" x2="-198.0" y2="-342.9" class="edge edge-fallback" /><line x1="0" y1="0" x2="-164.5" y2="-360.2" class="edge edge-fallback" /><line x1="0" y1="0" x2="-129.5" y2="-374.2" class="edge edge-fallback" /><line x1="0" y1="0" x2="-93.4" y2="-384.8" class="edge edge-fallback" /><line x1="0" y1="0" x2="-56.4" y2="-392.0" class="edge edge-fallback" /><line x1="0" y1="0" x2="-18.8" y2="-395.6" class="edge edge-fallback" /></g>
+  <g id="nodes"><circle cx="0.0" cy="0.0" r="24" fill="#eb6834" class="node"><title>Your change: HelpFormatter.write_dl (src/click/formatting.py:210), the code you changed</title></circle><circle cx="15.7" cy="-329.6" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_absolute_path (tests/test_shell_completion.py:167), 3 steps from your change</title></circle><circle cx="207.9" cy="-72.0" r="12" fill="#898781" class="node"><title>Code that uses it: Command (src/click/core.py:1160), 2 steps from your change</title></circle><circle cx="89.6" cy="63.8" r="12" fill="#898781" class="node"><title>Code that uses it: HelpFormatter (src/click/formatting.py:102), 1 step from your change</title></circle><circle cx="47.0" cy="-326.6" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_add_different_name (tests/test_shell_completion.py:278), 3 steps from your change</title></circle><circle cx="77.8" cy="-320.7" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_argument_default (tests/test_shell_completion.py:93), 3 steps from your change</title></circle><circle cx="107.9" cy="-311.9" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_argument_nargs (tests/test_shell_completion.py:224), 3 steps from your change</title></circle><circle cx="137.1" cy="-300.2" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_argument_order (tests/test_shell_completion.py:76), 3 steps from your change</title></circle><circle cx="165.0" cy="-285.8" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_chained (tests/test_shell_completion.py:51), 3 steps from your change</title></circle><circle cx="191.4" cy="-268.8" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_choice_case_sensitive (tests/test_shell_completion.py:340), 3 steps from your change</title></circle><circle cx="216.1" cy="-249.4" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_choice_conflicting_prefix (tests/test_shell_completion.py:122), 3 steps from your change</title></circle><circle cx="238.8" cy="-227.7" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_choice_special_characters (tests/test_shell_completion.py:115), 3 steps from your change</title></circle><circle cx="259.4" cy="-204.0" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_command (tests/test_shell_completion.py:25), 3 steps from your change</title></circle><circle cx="277.6" cy="-178.4" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_context_settings (tests/test_shell_completion.py:326), 3 steps from your change</title></circle><circle cx="293.3" cy="-151.2" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_double_dash (tests/test_shell_completion.py:242), 3 steps from your change</title></circle><circle cx="306.4" cy="-122.6" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_full_complete (tests/test_shell_completion.py:318), 3 steps from your change</title></circle><circle cx="316.6" cy="-93.0" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_full_source (tests/test_shell_completion.py:300), 3 steps from your change</title></circle><circle cx="324.0" cy="-62.5" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_group (tests/test_shell_completion.py:35), 3 steps from your change</title></circle><circle cx="328.5" cy="-31.4" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_group_command_same_option (tests/test_shell_completion.py:41), 3 steps from your change</title></circle><circle cx="330.0" cy="0.0" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_help_option (tests/test_shell_completion.py:70), 3 steps from your change</title></circle><circle cx="328.5" cy="31.4" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_hidden (tests/test_shell_completion.py:257), 3 steps from your change</title></circle><circle cx="324.0" cy="62.5" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_option_count (tests/test_shell_completion.py:134), 3 steps from your change</title></circle><circle cx="316.6" cy="93.0" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_option_custom (tests/test_shell_completion.py:189), 3 steps from your change</title></circle><circle cx="306.4" cy="122.6" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_option_flag (tests/test_shell_completion.py:175), 3 steps from your change</title></circle><circle cx="293.3" cy="151.2" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_option_multiple (tests/test_shell_completion.py:205), 3 steps from your change</title></circle><circle cx="277.6" cy="178.4" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_option_nargs (tests/test_shell_completion.py:217), 3 steps from your change</title></circle><circle cx="259.4" cy="204.0" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_option_optional (tests/test_shell_completion.py:140), 3 steps from your change</title></circle><circle cx="238.8" cy="227.7" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_path_types (tests/test_shell_completion.py:158), 3 steps from your change</title></circle><circle cx="216.1" cy="249.4" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_type_choice (tests/test_shell_completion.py:108), 3 steps from your change</title></circle><circle cx="-108.0" cy="20.8" r="12" fill="#898781" class="node"><title>Code that uses it: Command.format_options (src/click/core.py:1378), 1 step from your change</title></circle><circle cx="-105.5" cy="31.0" r="12" fill="#898781" class="node"><title>Code that uses it: MultiCommand.format_commands (src/click/core.py:1611), 1 step from your change</title></circle><circle cx="-144.1" cy="166.3" r="12" fill="#898781" class="node"><title>Code that uses it: Command.format_epilog (src/click/core.py:1390), 2 steps from your change</title></circle><circle cx="-159.2" cy="151.8" r="12" fill="#898781" class="node"><title>Code that uses it: Command.format_help (src/click/core.py:1344), 2 steps from your change</title></circle><circle cx="-172.9" cy="136.0" r="12" fill="#898781" class="node"><title>Code that uses it: Command.format_help_text (src/click/core.py:1361), 2 steps from your change</title></circle><circle cx="-195.5" cy="100.8" r="12" fill="#898781" class="node"><title>Code that uses it: Command.format_usage (src/click/core.py:1264), 2 steps from your change</title></circle><circle cx="10.5" cy="219.8" r="12" fill="#898781" class="node"><title>Code that uses it: Context (src/click/core.py:160), 2 steps from your change</title></circle><circle cx="-204.2" cy="81.8" r="12" fill="#898781" class="node"><title>Code that uses it: Context.make_formatter (src/click/core.py:535), 2 steps from your change</title></circle><circle cx="-127.6" cy="179.2" r="12" fill="#898781" class="node"><title>Code that uses it: MultiCommand (src/click/core.py:1472), 2 steps from your change</title></circle><circle cx="-185.1" cy="118.9" r="12" fill="#898781" class="node"><title>Code that uses it: MultiCommand.format_options (src/click/core.py:1562), 2 steps from your change</title></circle><circle cx="191.4" cy="268.8" r="12" fill="#898781" class="node"><title>Code that uses it: Argument.add_to_parser (src/click/core.py:3041), 3 steps from your change</title></circle><circle cx="137.1" cy="300.2" r="12" fill="#898781" class="node"><title>Code that uses it: Argument.get_error_hint (src/click/core.py:3038), 3 steps from your change</title></circle><circle cx="-15.7" cy="329.6" r="12" fill="#898781" class="node"><title>Code that uses it: Argument.get_usage_pieces (src/click/core.py:3035), 3 steps from your change</title></circle><circle cx="107.9" cy="311.9" r="12" fill="#898781" class="node"><title>Code that uses it: BaseCommand.get_help (src/click/core.py:904), 3 steps from your change</title></circle><circle cx="15.7" cy="329.6" r="12" fill="#898781" class="node"><title>Code that uses it: BaseCommand.get_usage (src/click/core.py:901), 3 steps from your change</title></circle><circle cx="-47.0" cy="326.6" r="12" fill="#898781" class="node"><title>Code that uses it: BaseCommand.invoke (src/click/core.py:953), 3 steps from your change</title></circle><circle cx="-77.8" cy="320.7" r="12" fill="#898781" class="node"><title>Code that uses it: BaseCommand.make_context (src/click/core.py:907), 3 steps from your change</title></circle><circle cx="-107.9" cy="311.9" r="12" fill="#898781" class="node"><title>Code that uses it: BaseCommand.parse_args (src/click/core.py:946), 3 steps from your change</title></circle><circle cx="-137.1" cy="300.2" r="12" fill="#898781" class="node"><title>Code that uses it: BaseCommand.shell_complete (src/click/core.py:959), 3 steps from your change</title></circle><circle cx="-165.0" cy="285.8" r="12" fill="#898781" class="node"><title>Code that uses it: BaseCommand.to_info_dict (src/click/core.py:884), 3 steps from your change</title></circle><circle cx="165.0" cy="285.8" r="12" fill="#898781" class="node"><title>Code that uses it: Command.collect_usage_pieces (src/click/core.py:1272), 3 steps from your change</title></circle><circle cx="-238.8" cy="227.7" r="12" fill="#898781" class="node"><title>Code that uses it: Command.get_help (src/click/core.py:1319), 3 steps from your change</title></circle><circle cx="77.8" cy="320.7" r="12" fill="#898781" class="node"><title>Code that uses it: Command.get_help_option (src/click/core.py:1291), 3 steps from your change</title></circle><circle cx="47.0" cy="326.6" r="12" fill="#898781" class="node"><title>Code that uses it: Command.get_help_option_names (src/click/core.py:1283), 3 steps from your change</title></circle><g transform="translate(-394.2,37.6) rotate(354.5)"><title>tests/test_arguments.py: 26 test(s) run to be safe, because this file imports the code you changed
+tests/test_arguments.py::test_argument_unbounded_nargs_cant_have_default
+tests/test_arguments.py::test_bytes_args
+tests/test_arguments.py::test_defaults_for_nargs
+tests/test_arguments.py::test_eat_options
+tests/test_arguments.py::test_empty_nargs
+tests/test_arguments.py::test_file_args
+tests/test_arguments.py::test_file_atomics
+tests/test_arguments.py::test_implicit_non_required
+tests/test_arguments.py::test_missing_arg
+tests/test_arguments.py::test_missing_argument_string_cast
+tests/test_arguments.py::test_multiple_not_allowed
+tests/test_arguments.py::test_multiple_param_decls_not_allowed
+tests/test_arguments.py::test_nargs_bad_default
+tests/test_arguments.py::test_nargs_envvar
+tests/test_arguments.py::test_nargs_envvar_only_if_values_empty
+tests/test_arguments.py::test_nargs_err
+tests/test_arguments.py::test_nargs_specified_plus_star_ordering
+tests/test_arguments.py::test_nargs_star
+tests/test_arguments.py::test_nargs_star_ordering
+tests/test_arguments.py::test_nargs_tup
+tests/test_arguments.py::test_nargs_tup_composite
+tests/test_arguments.py::test_nested_subcommand_help
+tests/test_arguments.py::test_path_allow_dash
+tests/test_arguments.py::test_stdout_default
+tests/test_arguments.py::test_subcommand_help
+tests/test_arguments.py::test_when_argument_decorator_is_used_multiple_times_cls_is_preserved</title><rect x="-372.5" y="-19" width="372.5" height="38" rx="19" class="pill" /><text x="-186.2" dy="0.35em" text-anchor="middle" class="pill-text">test_arguments.py · 26 more tests</text></g><g transform="translate(-396.0,0.0) rotate(360.0)"><title>tests/test_basic.py: 27 test(s) run to be safe, because this file imports the code you changed
+tests/test_basic.py::test_basic_functionality
+tests/test_basic.py::test_basic_group
+tests/test_basic.py::test_boolean_conversion
+tests/test_basic.py::test_boolean_flag
+tests/test_basic.py::test_boolean_switch
+tests/test_basic.py::test_choice_argument
+tests/test_basic.py::test_choice_option
+tests/test_basic.py::test_datetime_option_custom
+tests/test_basic.py::test_datetime_option_default
+tests/test_basic.py::test_evaluation_order
+tests/test_basic.py::test_file_lazy_mode
+tests/test_basic.py::test_file_option
+tests/test_basic.py::test_float_option
+tests/test_basic.py::test_group_commands_dict
+tests/test_basic.py::test_group_from_list
+tests/test_basic.py::test_help_invalid_default
+tests/test_basic.py::test_hidden_command
+tests/test_basic.py::test_hidden_group
+tests/test_basic.py::test_hidden_option
+tests/test_basic.py::test_int_option
+tests/test_basic.py::test_path_option
+tests/test_basic.py::test_repr
+tests/test_basic.py::test_required_option
+tests/test_basic.py::test_return_values
+tests/test_basic.py::test_string_option
+tests/test_basic.py::test_summary_line
+tests/test_basic.py::test_uuid_option</title><rect x="-330.5" y="-19" width="330.5" height="38" rx="19" class="pill" /><text x="-165.2" dy="0.35em" text-anchor="middle" class="pill-text">test_basic.py · 27 more tests</text></g><g transform="translate(-394.2,-37.6) rotate(365.5)"><title>tests/test_chain.py: 9 test(s) run to be safe, because this file imports the code you changed
+tests/test_chain.py::test_args_and_chain
+tests/test_chain.py::test_basic_chaining
+tests/test_chain.py::test_chaining_help
+tests/test_chain.py::test_chaining_with_arguments
+tests/test_chain.py::test_chaining_with_options
+tests/test_chain.py::test_multicommand_arg_behavior
+tests/test_chain.py::test_multicommand_chaining
+tests/test_chain.py::test_no_command_result_callback
+tests/test_chain.py::test_pipeline</title><rect x="-320.0" y="-19" width="320.0" height="38" rx="19" class="pill" /><text x="-160.0" dy="0.35em" text-anchor="middle" class="pill-text">test_chain.py · 9 more tests</text></g><g transform="translate(-388.8,-74.9) rotate(370.9)"><title>tests/test_command_decorators.py: 4 test(s) run to be safe, because this file imports the code you changed
+tests/test_command_decorators.py::test_command_no_parens
+tests/test_command_decorators.py::test_custom_command_no_parens
+tests/test_command_decorators.py::test_group_no_parens
+tests/test_command_decorators.py::test_params_argument</title><rect x="-456.5" y="-19" width="456.5" height="38" rx="19" class="pill" /><text x="-228.2" dy="0.35em" text-anchor="middle" class="pill-text">test_command_decorators.py · 4 more tests</text></g><g transform="translate(-380.0,-111.6) rotate(376.4)"><title>tests/test_commands.py: 20 test(s) run to be safe, because this file imports the code you changed
+tests/test_commands.py::test_abort_exceptions_with_disabled_standalone_mode
+tests/test_commands.py::test_aliased_command_canonical_name
+tests/test_commands.py::test_auto_shorthelp
+tests/test_commands.py::test_base_command
+tests/test_commands.py::test_command_parse_args_collects_option_prefixes
+tests/test_commands.py::test_default_maps
+tests/test_commands.py::test_deprecated_in_help_messages
+tests/test_commands.py::test_deprecated_in_invocation
+tests/test_commands.py::test_forwarded_params_consistency
+tests/test_commands.py::test_group_add_command_name
+tests/test_commands.py::test_group_invoke_collects_used_option_prefixes
+tests/test_commands.py::test_group_parse_args_collects_base_option_prefixes
+tests/test_commands.py::test_group_with_args
+tests/test_commands.py::test_invoked_subcommand
+tests/test_commands.py::test_no_args_is_help
+tests/test_commands.py::test_object_propagation
+tests/test_commands.py::test_other_command_forward
+tests/test_commands.py::test_other_command_invoke
+tests/test_commands.py::test_other_command_invoke_with_defaults
+tests/test_commands.py::test_unprocessed_options</title><rect x="-362.0" y="-19" width="362.0" height="38" rx="19" class="pill" /><text x="-181.0" dy="0.35em" text-anchor="middle" class="pill-text">test_commands.py · 20 more tests</text></g><g transform="translate(-367.6,-147.2) rotate(381.8)"><title>tests/test_context.py: 18 test(s) run to be safe, because this file imports the code you changed
+tests/test_context.py::test_close_before_pop
+tests/test_context.py::test_context_meta
+tests/test_context.py::test_context_pushing
+tests/test_context.py::test_ensure_context_objects
+tests/test_context.py::test_exit_not_standalone
+tests/test_context.py::test_get_context_objects
+tests/test_context.py::test_get_context_objects_missing
+tests/test_context.py::test_get_context_objects_no_ensuring
+tests/test_context.py::test_global_context_object
+tests/test_context.py::test_make_pass_decorator_args
+tests/test_context.py::test_make_pass_meta_decorator
+tests/test_context.py::test_make_pass_meta_decorator_doc
+tests/test_context.py::test_multi_enter
+tests/test_context.py::test_parameter_source
+tests/test_context.py::test_pass_obj
+tests/test_context.py::test_propagate_opt_prefixes
+tests/test_context.py::test_propagate_show_default_setting
+tests/test_context.py::test_with_resource</title><rect x="-351.5" y="-19" width="351.5" height="38" rx="19" class="pill" /><text x="-175.8" dy="0.35em" text-anchor="middle" class="pill-text">test_context.py · 18 more tests</text></g><g transform="translate(-352.0,-181.5) rotate(387.3)"><title>tests/test_custom_classes.py: 6 test(s) run to be safe, because this file imports the code you changed
+tests/test_custom_classes.py::test_command_context_class
+tests/test_custom_classes.py::test_context_formatter_class
+tests/test_custom_classes.py::test_context_invoke_type
+tests/test_custom_classes.py::test_group_command_class
+tests/test_custom_classes.py::test_group_group_class
+tests/test_custom_classes.py::test_group_group_class_self</title><rect x="-414.5" y="-19" width="414.5" height="38" rx="19" class="pill" /><text x="-207.2" dy="0.35em" text-anchor="middle" class="pill-text">test_custom_classes.py · 6 more tests</text></g><g transform="translate(-333.1,-214.1) rotate(392.7)"><title>tests/test_defaults.py: 4 test(s) run to be safe, because this file imports the code you changed
+tests/test_defaults.py::test_basic_defaults
+tests/test_defaults.py::test_multiple_defaults
+tests/test_defaults.py::test_multiple_flag_default
+tests/test_defaults.py::test_nargs_plus_multiple</title><rect x="-351.5" y="-19" width="351.5" height="38" rx="19" class="pill" /><text x="-175.8" dy="0.35em" text-anchor="middle" class="pill-text">test_defaults.py · 4 more tests</text></g><g transform="translate(-311.3,-244.8) rotate(398.2)"><title>tests/test_formatting.py: 17 test(s) run to be safe, because this file imports the code you changed
+tests/test_formatting.py::test_basic_functionality
+tests/test_formatting.py::test_formatting_custom_type_metavar
+tests/test_formatting.py::test_formatting_empty_help_lines
+tests/test_formatting.py::test_formatting_usage_custom_help
+tests/test_formatting.py::test_formatting_usage_error
+tests/test_formatting.py::test_formatting_usage_error_metavar_bad_arg
+tests/test_formatting.py::test_formatting_usage_error_metavar_missing_arg
+tests/test_formatting.py::test_formatting_usage_error_nested
+tests/test_formatting.py::test_formatting_usage_error_no_help
+tests/test_formatting.py::test_formatting_with_options_metavar_empty
+tests/test_formatting.py::test_global_show_default
+tests/test_formatting.py::test_help_formatter_write_text
+tests/test_formatting.py::test_removing_multiline_marker
+tests/test_formatting.py::test_truncating_docstring
+tests/test_formatting.py::test_truncating_docstring_no_help
+tests/test_formatting.py::test_wrapping_long_command_name
+tests/test_formatting.py::test_wrapping_long_options_strings</title><rect x="-383.0" y="-19" width="383.0" height="38" rx="19" class="pill" /><text x="-191.5" dy="0.35em" text-anchor="middle" class="pill-text">test_formatting.py · 17 more tests</text></g><g transform="translate(-286.6,-273.3) rotate(403.6)"><title>tests/test_info_dict.py: 4 test(s) run to be safe, because this file imports the code you changed
+tests/test_info_dict.py::test_command
+tests/test_info_dict.py::test_context
+tests/test_info_dict.py::test_parameter
+tests/test_info_dict.py::test_paramtype_no_name</title><rect x="-362.0" y="-19" width="362.0" height="38" rx="19" class="pill" /><text x="-181.0" dy="0.35em" text-anchor="middle" class="pill-text">test_info_dict.py · 4 more tests</text></g><g transform="translate(-259.3,-299.3) rotate(409.1)"><title>tests/test_normalization.py: 3 test(s) run to be safe, because this file imports the code you changed
+tests/test_normalization.py::test_choice_normalization
+tests/test_normalization.py::test_command_normalization
+tests/test_normalization.py::test_option_normalization</title><rect x="-404.0" y="-19" width="404.0" height="38" rx="19" class="pill" /><text x="-202.0" dy="0.35em" text-anchor="middle" class="pill-text">test_normalization.py · 3 more tests</text></g><g transform="translate(-229.7,-322.6) rotate(414.5)"><title>tests/test_options.py: 58 test(s) run to be safe, because this file imports the code you changed
+tests/test_options.py::test_aliases_for_flags
+tests/test_options.py::test_argument_custom_class
+tests/test_options.py::test_bool_flag_with_type
+tests/test_options.py::test_callback_validates_prompt
+tests/test_options.py::test_case_insensitive_choice
+tests/test_options.py::test_case_insensitive_choice_returned_exactly
+tests/test_options.py::test_count_default_type_help
+tests/test_options.py::test_counting
+tests/test_options.py::test_custom_validation
+tests/test_options.py::test_do_not_show_default_empty_multiple
+tests/test_options.py::test_do_not_show_no_default
+tests/test_options.py::test_dynamic_default_help_special_method
+tests/test_options.py::test_dynamic_default_help_text
+tests/test_options.py::test_dynamic_default_help_unset
+tests/test_options.py::test_empty_envvar
+tests/test_options.py::test_file_type_help_default
+tests/test_options.py::test_flag_duplicate_names
+tests/test_options.py::test_hide_false_default_boolean_flag_value
+tests/test_options.py::test_init_bad_default_list
+tests/test_options.py::test_init_good_default_list
+tests/test_options.py::test_intrange_default_help_text
+tests/test_options.py::test_invalid_flag_combinations
+tests/test_options.py::test_invalid_nargs
+tests/test_options.py::test_invalid_option
+tests/test_options.py::test_is_bool_flag_is_correctly_set
+tests/test_options.py::test_legacy_options
+tests/test_options.py::test_missing_choice
+tests/test_options.py::test_missing_option_string_cast
+tests/test_options.py::test_missing_required_flag
+tests/test_options.py::test_multiple_default_composite_type
+… and 28 more</title><rect x="-572.0" y="-19" width="572.0" height="38" rx="19" class="pill pill-failed" /><text x="-286.0" dy="0.35em" text-anchor="middle" class="pill-text">test_options.py · 58 more tests · ✓ 1 caught the bug</text></g><g transform="translate(-198.0,-342.9) rotate(420.0)"><title>tests/test_parser.py: 3 test(s) run to be safe, because this file imports the code you changed
+tests/test_parser.py::test_parser_collects_prefixes
+tests/test_parser.py::test_parser_default_prefixes
+tests/test_parser.py::test_split_arg_string</title><rect x="-330.5" y="-19" width="330.5" height="38" rx="19" class="pill" /><text x="-165.2" dy="0.35em" text-anchor="middle" class="pill-text">test_parser.py · 3 more tests</text></g><g transform="translate(-164.5,-360.2) rotate(425.5)"><title>tests/test_shell_completion.py: 4 test(s) run to be safe, because this file imports the code you changed
+tests/test_shell_completion.py::test_add_completion_class
+tests/test_shell_completion.py::test_add_completion_class_decorator
+tests/test_shell_completion.py::test_add_completion_class_with_name
+tests/test_shell_completion.py::test_completion_item_data</title><rect x="-435.5" y="-19" width="435.5" height="38" rx="19" class="pill" /><text x="-217.8" dy="0.35em" text-anchor="middle" class="pill-text">test_shell_completion.py · 4 more tests</text></g><g transform="translate(-129.5,-374.2) rotate(430.9)"><title>tests/test_termui.py: 29 test(s) run to be safe, because this file imports the code you changed
+tests/test_termui.py::test_choices_list_in_prompt
+tests/test_termui.py::test_confirmation_prompt
+tests/test_termui.py::test_fast_edit
+tests/test_termui.py::test_file_prompt_default_format
+tests/test_termui.py::test_getchar_special_key_windows
+tests/test_termui.py::test_getchar_windows
+tests/test_termui.py::test_getchar_windows_exceptions
+tests/test_termui.py::test_progress_bar_update_min_steps
+tests/test_termui.py::test_progressbar_eta
+tests/test_termui.py::test_progressbar_format_bar
+tests/test_termui.py::test_progressbar_format_eta
+tests/test_termui.py::test_progressbar_format_pos
+tests/test_termui.py::test_progressbar_format_progress_line
+tests/test_termui.py::test_progressbar_format_progress_line_with_show_func
+tests/test_termui.py::test_progressbar_hidden
+tests/test_termui.py::test_progressbar_init_exceptions
+tests/test_termui.py::test_progressbar_is_iterator
+tests/test_termui.py::test_progressbar_item_show_func
+tests/test_termui.py::test_progressbar_iter_outside_with_exceptions
+tests/test_termui.py::test_progressbar_length_hint
+tests/test_termui.py::test_progressbar_strip_regression
+tests/test_termui.py::test_progressbar_time_per_iteration
+tests/test_termui.py::test_progressbar_update
+tests/test_termui.py::test_progressbar_update_with_item_show_func
+tests/test_termui.py::test_progressbar_yields_all_items
+tests/test_termui.py::test_prompt_required_false
+tests/test_termui.py::test_prompt_required_with_required
+tests/test_termui.py::test_secho
+tests/test_termui.py::test_secho_non_text</title><rect x="-341.0" y="-19" width="341.0" height="38" rx="19" class="pill" /><text x="-170.5" dy="0.35em" text-anchor="middle" class="pill-text">test_termui.py · 29 more tests</text></g><g transform="translate(-93.4,-384.8) rotate(436.4)"><title>tests/test_testing.py: 19 test(s) run to be safe, because this file imports the code you changed
+tests/test_testing.py::test_args
+tests/test_testing.py::test_catch_exceptions
+tests/test_testing.py::test_command_standalone_mode_returns_value
+tests/test_testing.py::test_echo_stdin_prompts
+tests/test_testing.py::test_echo_stdin_stream
+tests/test_testing.py::test_env
+tests/test_testing.py::test_exit_code_and_output_from_sys_exit
+tests/test_testing.py::test_file_stdin_attrs
+tests/test_testing.py::test_getchar
+tests/test_testing.py::test_isolated_runner
+tests/test_testing.py::test_isolated_runner_custom_tempdir
+tests/test_testing.py::test_isolation_stderr_errors
+tests/test_testing.py::test_prompts
+tests/test_testing.py::test_runner
+tests/test_testing.py::test_runner_with_stream
+tests/test_testing.py::test_setting_prog_name_in_extra
+tests/test_testing.py::test_stderr
+tests/test_testing.py::test_with_color
+tests/test_testing.py::test_with_color_but_pause_not_blocking</title><rect x="-351.5" y="-19" width="351.5" height="38" rx="19" class="pill" /><text x="-175.8" dy="0.35em" text-anchor="middle" class="pill-text">test_testing.py · 19 more tests</text></g><g transform="translate(-56.4,-392.0) rotate(441.8)"><title>tests/test_types.py: 9 test(s) run to be safe, because this file imports the code you changed
+tests/test_types.py::test_cast_multi_default
+tests/test_types.py::test_file_error_surrogates
+tests/test_types.py::test_file_surrogates
+tests/test_types.py::test_float_range_no_clamp_open
+tests/test_types.py::test_path_resolve_symlink
+tests/test_types.py::test_path_surrogates
+tests/test_types.py::test_path_type
+tests/test_types.py::test_range
+tests/test_types.py::test_range_fail</title><rect x="-320.0" y="-19" width="320.0" height="38" rx="19" class="pill" /><text x="-160.0" dy="0.35em" text-anchor="middle" class="pill-text">test_types.py · 9 more tests</text></g><g transform="translate(-18.8,-395.6) rotate(447.3)"><title>tests/test_utils.py: 27 test(s) run to be safe, because this file imports the code you changed
+tests/test_utils.py::test_confirm_repeat
+tests/test_utils.py::test_detect_program_name
+tests/test_utils.py::test_echo
+tests/test_utils.py::test_echo_color_flag
+tests/test_utils.py::test_echo_custom_file
+tests/test_utils.py::test_echo_no_streams
+tests/test_utils.py::test_echo_via_pager
+tests/test_utils.py::test_echo_with_capsys
+tests/test_utils.py::test_echo_writing_to_standard_error
+tests/test_utils.py::test_expand_args
+tests/test_utils.py::test_filename_formatting
+tests/test_utils.py::test_iter_keepopenfile
+tests/test_utils.py::test_iter_lazyfile
+tests/test_utils.py::test_make_default_short_help
+tests/test_utils.py::test_open_file
+tests/test_utils.py::test_open_file_atomic_permissions_existing_file
+tests/test_utils.py::test_open_file_atomic_permissions_new_file
+tests/test_utils.py::test_open_file_ignore_errors_stdin
+tests/test_utils.py::test_open_file_ignore_invalid_utf8
+tests/test_utils.py::test_open_file_ignore_no_encoding
+tests/test_utils.py::test_open_file_pathlib_dash
+tests/test_utils.py::test_open_file_respects_ignore
+tests/test_utils.py::test_prompt_cast_default
+tests/test_utils.py::test_prompts
+tests/test_utils.py::test_prompts_abort
+tests/test_utils.py::test_styling
+tests/test_utils.py::test_unstyle_other_ansi</title><rect x="-330.5" y="-19" width="330.5" height="38" rx="19" class="pill" /><text x="-165.2" dy="0.35em" text-anchor="middle" class="pill-text">test_utils.py · 27 more tests</text></g></g>
+  <g id="labels"><text x="0.0" y="52.0" text-anchor="middle" class="label label-center">write_dl</text><text transform="translate(15.7,-329.6) rotate(-87.3)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_absolute_path</text><text x="207.9" y="-92.0" text-anchor="middle" class="label">Command</text><text x="89.6" y="99.8" text-anchor="middle" class="label">HelpFormatter</text><text transform="translate(47.0,-326.6) rotate(-81.8)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_add_different_name</text><text transform="translate(77.8,-320.7) rotate(-76.4)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_argument_default</text><text transform="translate(107.9,-311.9) rotate(-70.9)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_argument_nargs</text><text transform="translate(137.1,-300.2) rotate(-65.5)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_argument_order</text><text transform="translate(165.0,-285.8) rotate(-60.0)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_chained</text><text transform="translate(191.4,-268.8) rotate(-54.5)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_choice_case_sensitive</text><text transform="translate(216.1,-249.4) rotate(-49.1)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_choice_conflicting_prefix</text><text transform="translate(238.8,-227.7) rotate(-43.6)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_choice_special_characters</text><text transform="translate(259.4,-204.0) rotate(-38.2)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_command</text><text transform="translate(277.6,-178.4) rotate(-32.7)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_context_settings</text><text transform="translate(293.3,-151.2) rotate(-27.3)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_double_dash</text><text transform="translate(306.4,-122.6) rotate(-21.8)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_full_complete</text><text transform="translate(316.6,-93.0) rotate(-16.4)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_full_source</text><text transform="translate(324.0,-62.5) rotate(-10.9)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_group</text><text transform="translate(328.5,-31.4) rotate(-5.5)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_group_command_same_option</text><text transform="translate(330.0,0.0) rotate(0.0)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_help_option</text><text transform="translate(328.5,31.4) rotate(5.5)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_hidden</text><text transform="translate(324.0,62.5) rotate(10.9)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_option_count</text><text transform="translate(316.6,93.0) rotate(16.4)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_option_custom</text><text transform="translate(306.4,122.6) rotate(21.8)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_option_flag</text><text transform="translate(293.3,151.2) rotate(27.3)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_option_multiple</text><text transform="translate(277.6,178.4) rotate(32.7)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_option_nargs</text><text transform="translate(259.4,204.0) rotate(38.2)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_option_optional</text><text transform="translate(238.8,227.7) rotate(43.6)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_path_types</text><text transform="translate(216.1,249.4) rotate(49.1)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_type_choice</text><text transform="translate(-108.0,20.8) rotate(349.1)" x="-18.0" dy="0.35em" text-anchor="end" class="label">format_options</text><text transform="translate(-105.5,31.0) rotate(343.6)" x="-18.0" dy="0.35em" text-anchor="end" class="label">format_commands</text><text transform="translate(-144.1,166.3) rotate(310.9)" x="-18.0" dy="0.35em" text-anchor="end" class="label">format_epilog</text><text x="-159.2" y="187.8" text-anchor="middle" class="label">format_help</text><text transform="translate(-172.9,136.0) rotate(321.8)" x="-18.0" dy="0.35em" text-anchor="end" class="label">format_help_text</text><text transform="translate(-195.5,100.8) rotate(332.7)" x="-18.0" dy="0.35em" text-anchor="end" class="label">format_usage</text><text x="10.5" y="255.8" text-anchor="middle" class="label">Context</text><text transform="translate(-204.2,81.8) rotate(338.2)" x="-18.0" dy="0.35em" text-anchor="end" class="label">make_formatter</text><text transform="translate(-127.6,179.2) rotate(305.5)" x="-18.0" dy="0.35em" text-anchor="end" class="label">MultiCommand</text><text transform="translate(-185.1,118.9) rotate(327.3)" x="-18.0" dy="0.35em" text-anchor="end" class="label">format_options</text><text transform="translate(191.4,268.8) rotate(54.5)" x="18.0" dy="0.35em" text-anchor="start" class="label">add_to_parser</text><text transform="translate(137.1,300.2) rotate(65.5)" x="18.0" dy="0.35em" text-anchor="start" class="label">get_error_hint</text><text transform="translate(-15.7,329.6) rotate(272.7)" x="-18.0" dy="0.35em" text-anchor="end" class="label">get_usage_pieces</text><text transform="translate(107.9,311.9) rotate(70.9)" x="18.0" dy="0.35em" text-anchor="start" class="label">get_help</text><text transform="translate(15.7,329.6) rotate(87.3)" x="18.0" dy="0.35em" text-anchor="start" class="label">get_usage</text><text transform="translate(-47.0,326.6) rotate(278.2)" x="-18.0" dy="0.35em" text-anchor="end" class="label">invoke</text><text transform="translate(-77.8,320.7) rotate(283.6)" x="-18.0" dy="0.35em" text-anchor="end" class="label">make_context</text><text transform="translate(-107.9,311.9) rotate(289.1)" x="-18.0" dy="0.35em" text-anchor="end" class="label">parse_args</text><text transform="translate(-137.1,300.2) rotate(294.5)" x="-18.0" dy="0.35em" text-anchor="end" class="label">shell_complete</text><text transform="translate(-165.0,285.8) rotate(300.0)" x="-18.0" dy="0.35em" text-anchor="end" class="label">to_info_dict</text><text transform="translate(165.0,285.8) rotate(60.0)" x="18.0" dy="0.35em" text-anchor="start" class="label">collect_usage_pieces</text><text transform="translate(-238.8,227.7) rotate(316.4)" x="-18.0" dy="0.35em" text-anchor="end" class="label">get_help</text><text transform="translate(77.8,320.7) rotate(76.4)" x="18.0" dy="0.35em" text-anchor="start" class="label">get_help_option</text><text transform="translate(47.0,326.6) rotate(81.8)" x="18.0" dy="0.35em" text-anchor="start" class="label">get_help_option_names</text></g>
+</svg>
+  </div>
+  <div class="note">Read it from the middle out. Each ring is one step further from your change: ring 1 uses your code directly, ring 2 uses something on ring 1, and so on (up to 3). The dashed outer ring holds test files RIPPLE also runs to be safe, because they import the file you changed. Hover anything for details.</div>
+</body>
+</html>

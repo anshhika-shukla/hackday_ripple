@@ -99,13 +99,14 @@ def handle_check(args: argparse.Namespace) -> int:
     # 4. Optional Test Execution
     start_tests = time.time()
     test_ids = [c.test_id for c in selected]
-    results_dict = {"passed": 0, "failed": 0, "failed_ids": []}
+    results_dict = {"passed": 0, "failed": 0, "skipped": 0, "failed_ids": []}
 
     if do_run and test_ids:
         res = run_tests(test_ids=test_ids, repo_path=repo, timeout_s=config.timeout_s)
         results_dict = {
             "passed": res.passed,
             "failed": res.failed,
+            "skipped": res.skipped,
             "failed_ids": res.failed_ids,
         }
     tests_duration = time.time() - start_tests

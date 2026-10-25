@@ -21,6 +21,10 @@ if [ -n "$(git -C "$TARGET_DIR" status --porcelain --untracked-files=no)" ]; the
 fi
 
 restore() { git -C "$TARGET_DIR" checkout -q -- .; }
+# Click 8.1.7's own tests trip a pytest 9 deprecation that is unrelated to RIPPLE (as in run_eval.sh).
+if [ "$TARGET" = "click" ]; then
+    export PYTEST_ADDOPTS="${PYTEST_ADDOPTS:-} -W ignore::pytest.PytestRemovedIn10Warning"
+fi
 trap restore EXIT
 
 echo "======================================================================"

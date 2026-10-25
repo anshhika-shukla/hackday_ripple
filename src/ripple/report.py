@@ -22,6 +22,19 @@ class Report(BaseModel):
     triage: dict[str, Any] = Field(default_factory=dict)  # model's change_kind, risk, summary
 
 
+def cases_run(results: dict[str, Any]) -> int:
+    """Test cases pytest ran (a selected test function can expand into several parametrized cases)."""
+    return results.get("passed", 0) + results.get("failed", 0) + results.get("skipped", 0)
+
+
+def _scope_cases(report: Report) -> str:
+    """Selected functions and the suite total are different units; state the suite in pytest test cases."""
+    ran = cases_run(report.results)
+    if ran and report.suite_total:
+        return f"pytest ran **{ran}** of **{report.suite_total}** test cases ({100 * ran / report.suite_total:.1f}%)"
+    return f"the suite has {report.suite_total} test cases" if report.suite_total else "suite size unknown"
+
+
 def _triage_line(report: Report) -> str:
     """What the local model said about the change, or why it said nothing."""
     if report.llm_status == "ok" and report.triage:
@@ -57,7 +70,7 @@ def generate_brief(report: Report) -> str:
         f"## {status_icon} RIPPLE Test Selection Brief ({outcome_str})",
         "",
         f"- **Changed Symbols**: {symbols_text}",
-        f"- **Ripple Scope**: Selected **{report.selected}** of **{report.suite_total or report.candidates_total}** tests ({report.candidates_total} candidates identified)",
+        f"- **Ripple Scope**: Selected **{report.selected}** test functions ({report.candidates_total} candidates identified); {_scope_cases(report)}",
         f"- **Execution Mode**: `{report.mode.upper()}` (LLM Status: `{report.llm_status}`)",
         f"- **Guardrails Triggered**: `{guardrails_text}`",
         _triage_line(report),

@@ -138,8 +138,12 @@ async function renderLatest() {
   }
   const r = report.results || {}, tri = report.triage || {}, tm = report.timing || {};
   const changed = (report.changed || []).map(c => `<code>${esc(c.qualname)}</code> in ${esc(c.file)}`).join(", ") || "nothing";
-  const share = report.suite_total ? ` (${(100 * report.selected / report.suite_total).toFixed(1)}%)` : "";
-  const ran = "failed" in r || "passed" in r;
+  // Picked tests are test functions; the suite total is pytest test cases (parametrized functions expand).
+  const cases = (r.passed || 0) + (r.failed || 0) + (r.skipped || 0);
+  const scope = cases && report.suite_total
+    ? `pytest ran ${cases} of ${report.suite_total} test cases (${(100 * cases / report.suite_total).toFixed(1)}%)`
+    : `${report.suite_total} test cases in the suite`;
+  const ran = cases > 0;
   const result = !ran ? `<div class="v">Not run</div><div class="d">dry run</div>`
     : r.failed ? `<div class="v warn">✗ ${r.failed} failed</div><div class="d">${(r.failed_ids || []).map(id => `<code>${esc(id.split("::").slice(1).join(" › "))}</code>`).join(" ")}</div>`
     : `<div class="v ok">✓ All passed</div><div class="d">${r.passed} tests passed</div>`;
@@ -152,7 +156,7 @@ async function renderLatest() {
     <h3>${esc(meta?.repo || "Your project")}</h3>
     <p style="flex:0">You changed ${changed}${meta?.checked_at ? ` · checked ${esc(meta.checked_at)}` : ""}</p>
     <div class="stats">
-      <div class="stat"><div class="k">Tests RIPPLE picked</div><div class="v">${report.selected} <span style="font-size:16px;font-weight:400">of ${report.suite_total}</span></div><div class="d">${share.trim() || "&nbsp;"}</div></div>
+      <div class="stat"><div class="k">Tests RIPPLE picked</div><div class="v">${report.selected} <span style="font-size:16px;font-weight:400">test functions</span></div><div class="d">${scope}</div></div>
       <div class="stat"><div class="k">Result</div>${result}</div>
       <div class="stat"><div class="k">Time</div><div class="d" style="padding-top:6px">${esc(time) || "–"}</div></div>
     </div>

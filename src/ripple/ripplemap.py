@@ -12,6 +12,7 @@ from typing import Any
 from ripple.diffmap import ChangedSymbol, parse_diff
 from ripple.graphio import CodeGraph, load_graph, normalize_path
 from ripple.impact import CandidateTest, _ripple_neighbors, compute_impact, is_runnable_test, to_pytest_id
+from ripple.report import cases_run
 
 CHANGE = "#eb6834"  # orange: the changed code
 CALLER = "#898781"  # grey: code on the path between the change and a test
@@ -279,9 +280,14 @@ def build_ripple_map_html(
     # Header in plain words: what changed, how many tests ran, what happened, and the AI's read.
     changed_names = ", ".join(f"<code>{html.escape(s.qualname)}</code> in {html.escape(s.file)}" for s in changed_symbols) or "nothing"
     n_selected = report.get("selected", len(selected_tests))
-    pct = f" ({100 * n_selected / total_suite_count:.1f}%)" if total_suite_count else ""
-    stats = [f'<div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>{n_selected}</strong> of {total_suite_count}{pct}</span></div>']
     results = report.get("results") or {}
+    # Picked tests are test functions; the suite total is pytest test cases (parametrized functions expand).
+    ran = cases_run(results)
+    if ran and total_suite_count:
+        scope = f"pytest ran {ran} of {total_suite_count} test cases ({100 * ran / total_suite_count:.1f}%)"
+    else:
+        scope = f"{total_suite_count} test cases in the suite" if total_suite_count else ""
+    stats = [f'<div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>{n_selected}</strong> test functions</span><span class="d">{scope}</span></div>']
     if results:
         n_fail = results.get("failed", 0)
         verdict = f'<span class="v caught">✓ Bug caught</span><span class="d">{n_fail} test{"s" if n_fail != 1 else ""} failed, {results.get("passed", 0)} passed</span>' if n_fail \
