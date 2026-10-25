@@ -49,17 +49,24 @@ def test_only_covered_lines_mutated(tmp_path: Path):
 
 def test_restore_after_run(tmp_path: Path):
     """File content is properly restored after mutation execution."""
-    target_file = tmp_path / "target.py"
-    original_text = "def hello():\n    return 'world'\n"
-    target_file.write_text(original_text, encoding="utf-8")
+    from eval.ground_truth import run_ground_truth
 
-    # Simulate run with try/finally restore
-    try:
-        target_file.write_text("def hello():\n    return None\n", encoding="utf-8")
-    finally:
-        target_file.write_text(original_text, encoding="utf-8")
+    repo = tmp_path / "repo"
+    (repo / "tests").mkdir(parents=True)
+    original_text = "# keep this comment\ndef add(a, b):\n    return a + b\n"
+    (repo / "calc.py").write_text(original_text, encoding="utf-8")
+    (repo / "tests" / "test_calc.py").write_text(
+        "from calc import add\n\ndef test_add():\n    assert add(2, 3) == 5\n", encoding="utf-8"
+    )
 
-    assert target_file.read_text(encoding="utf-8") == original_text
+    data = run_ground_truth(repo, n_mutants=5, out_file=tmp_path / "gt.json")
+
+    assert (repo / "calc.py").read_text(encoding="utf-8") == original_text
+    assert data["total_tests"] == 1
+    assert data["killed_mutants"] >= 1
+    # Mutations are minimal: the comment survives and the diff touches one line.
+    assert all("-# keep this comment" not in m["diff"] for m in data["mutants"])
+    assert all(m["failed_test_ids"] == ["tests/test_calc.py::test_add"] for m in data["mutants"] if m["killed"])
 
 
 def test_scorer_hand_computed_metrics():

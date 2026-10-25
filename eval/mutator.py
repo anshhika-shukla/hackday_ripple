@@ -26,6 +26,14 @@ class ASTMutator(ast.NodeTransformer):
         self.target_line = target_line
         self.operator = operator
         self.applied = False
+        # Source span of the replaced expression and its new text, so only that span is rewritten.
+        self.span: tuple[int, int, int, int] | None = None
+        self.replacement: str | None = None
+
+    def _record(self, original: ast.AST, mutated: ast.AST) -> None:
+        self.span = (original.lineno, original.col_offset, original.end_lineno, original.end_col_offset)
+        self.replacement = ast.unparse(mutated)
+        self.applied = True
 
     def visit_Compare(self, node: ast.Compare):
         if self.applied or getattr(node, "lineno", -1) != self.target_line:
@@ -48,8 +56,9 @@ class ASTMutator(ast.NodeTransformer):
                 new_op = ast.Eq()
 
             if new_op:
+                original = copy.deepcopy(node)
                 node.ops[0] = new_op
-                self.applied = True
+                self._record(original, node)
                 return node
 
         return self.generic_visit(node)
@@ -58,13 +67,10 @@ class ASTMutator(ast.NodeTransformer):
         if self.applied or getattr(node, "lineno", -1) != self.target_line:
             return self.generic_visit(node)
 
-        if self.operator == "ARITH":
-            if isinstance(node.op, ast.Add):
-                node.op = ast.Sub()
-                self.applied = True
-            elif isinstance(node.op, ast.Sub):
-                node.op = ast.Add()
-                self.applied = True
+        if self.operator == "ARITH" and isinstance(node.op, (ast.Add, ast.Sub)):
+            original = copy.deepcopy(node)
+            node.op = ast.Sub() if isinstance(node.op, ast.Add) else ast.Add()
+            self._record(original, node)
             return node
 
         return self.generic_visit(node)
@@ -74,12 +80,14 @@ class ASTMutator(ast.NodeTransformer):
             return node
 
         if self.operator == "CONST_OFF_BY_ONE" and isinstance(node.value, int) and not isinstance(node.value, bool):
+            original = copy.deepcopy(node)
             node.value = node.value + 1
-            self.applied = True
+            self._record(original, node)
             return node
         elif self.operator == "BOOL_NEGATE" and isinstance(node.value, bool):
+            original = copy.deepcopy(node)
             node.value = not node.value
-            self.applied = True
+            self._record(original, node)
             return node
 
         return node
@@ -89,11 +97,23 @@ class ASTMutator(ast.NodeTransformer):
             return self.generic_visit(node)
 
         if self.operator == "RETURN_NONE" and node.value is not None:
+            original_value = node.value
             node.value = ast.Constant(value=None)
-            self.applied = True
+            self._record(original_value, node.value)
             return node
 
         return self.generic_visit(node)
+
+
+def _splice(source: str, span: tuple[int, int, int, int], replacement: str) -> str | None:
+    """Replace a single-line expression span (AST byte offsets) and keep the rest of the file intact."""
+    start_line, start_col, end_line, end_col = span
+    if start_line != end_line:
+        return None
+    lines = source.splitlines(keepends=True)
+    line = lines[start_line - 1].encode("utf-8")
+    lines[start_line - 1] = (line[:start_col] + replacement.encode("utf-8") + line[end_col:]).decode("utf-8")
+    return "".join(lines)
 
 
 def generate_mutants(
@@ -101,6 +121,7 @@ def generate_mutants(
     coverage_map: dict[str, set[int]] | None = None,
     seed: int = 1337,
     max_mutants: int = 40,
+    root: Path | None = None,
 ) -> list[Mutant]:
     """Deterministically generate AST mutants across covered lines."""
     rng = random.Random(seed)
@@ -163,23 +184,24 @@ def generate_mutants(
         try:
             tree = ast.parse(original_code, filename=str(file_path))
             mutator = ASTMutator(target_line=line, operator=op)
-            mutated_tree = mutator.visit(copy.deepcopy(tree))
-            ast.fix_missing_locations(mutated_tree)
-
-            if not mutator.applied:
+            mutator.visit(copy.deepcopy(tree))
+            if not mutator.applied or mutator.span is None:
                 continue
 
-            mutated_code = ast.unparse(mutated_tree) if hasattr(ast, "unparse") else ""
+            mutated_code = _splice(original_code, mutator.span, mutator.replacement)
+            if mutated_code is None or mutated_code == original_code:
+                continue
             # Ensure it compiles cleanly
             compile(mutated_code, str(file_path), "exec")
 
-            # Generate diff
+            # Generate diff with repo-relative paths, like `git diff`
+            rel_name = file_path.relative_to(root).as_posix() if root else file_path.name
             diff_lines = list(
                 difflib.unified_diff(
                     original_code.splitlines(keepends=True),
                     mutated_code.splitlines(keepends=True),
-                    fromfile=f"a/{file_path.name}",
-                    tofile=f"b/{file_path.name}",
+                    fromfile=f"a/{rel_name}",
+                    tofile=f"b/{rel_name}",
                 )
             )
             diff_str = "".join(diff_lines)

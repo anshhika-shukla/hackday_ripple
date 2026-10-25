@@ -1,0 +1,29 @@
+{
+  "strategy": "B",
+  "import_closure": true,
+  "model": null,
+  "tokens_per_sec": null,
+  "suite_size": 8,
+  "n_mutants": 26,
+  "runs": 1,
+  "metrics_per_run": [
+    {
+      "killed_count": 18,
+      "caught_count": 18,
+      "catch_rate": 100.0,
+      "mean_selection_ratio": 56.9,
+      "recall_at_3": 100.0,
+      "recall_at_5": 100.0,
+      "recall_at_10": 100.0
+    }
+  ],
+  "aggregated": {
+    "killed_count": 18,
+    "caught_count": 18,
+    "catch_rate": 100.0,
+    "mean_selection_ratio": 56.9,
+    "recall_at_3": 100.0,
+    "recall_at_5": 100.0,
+    "recall_at_10": 100.0
+  }
+}
