@@ -11,6 +11,8 @@
 
 **Team:** Eknoor, Anshika, Vaibhavi
 
+**Demo video:** [docs/demo_video.mp4](docs/demo_video.mp4)
+
 ---
 
 ## 1. Problem Statement & Target User
