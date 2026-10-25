@@ -1,4 +1,4 @@
-"""Acceptance tests for Phase 6: Standalone SVG/HTML Ripple Map."""
+"""Acceptance tests for the standalone change-story page (ripple map)."""
 
 import re
 from pathlib import Path
@@ -8,141 +8,63 @@ from ripple.graphio import load_graph
 from ripple.impact import compute_impact
 from ripple.ripplemap import build_ripple_map_html
 
+CHANGED = [ChangedSymbol(file="pricing.py", qualname="pricing.apply_discount", kind="function")]
+REPORT = {
+    "selected": 6,
+    "suite_total": 18,
+    "results": {"passed": 5, "failed": 1, "failed_ids": ["tests/test_cart.py::test_cart_total"]},
+    "llm_status": "ok",
+    "model": "qwen3:4b-instruct",
+    "triage": {"change_kind": "behavior", "risk": 4, "summary": "Discount applied twice."},
+}
+
+
+def _page(report=None):
+    graph = load_graph(Path(__file__).parent / "fixtures" / "graph.json")
+    candidates, _ = compute_impact(graph, CHANGED)
+    return candidates, build_ripple_map_html(
+        graph=graph, changed_symbols=CHANGED, selected_tests=candidates, total_suite_count=18, report=report
+    )
+
 
 def test_html_has_no_external_urls():
-    """No http:// or https:// references exist except the standard SVG xmlns attribute."""
-    graph_path = Path(__file__).parent / "fixtures" / "graph.json"
-    graph = load_graph(graph_path)
-
-    changed = [
-        ChangedSymbol(file="pricing.py", qualname="pricing.apply_discount", kind="function")
-    ]
-    candidates, _ = compute_impact(graph, changed)
-    html_doc = build_ripple_map_html(
-        graph=graph,
-        changed_symbols=changed,
-        selected_tests=candidates,
-        total_suite_count=len(graph.nodes),
-    )
-
-    # Find all urls
-    urls = re.findall(r'https?://[^\s"\'<>]+', html_doc)
-    # The only allowed external URL is http://www.w3.org/2000/svg
-    for u in urls:
-        assert u == "http://www.w3.org/2000/svg", f"Unexpected external URL found: {u}"
+    """The page is fully offline: no http:// or https:// references."""
+    _, html_doc = _page(REPORT)
+    assert re.findall(r'https?://[^\s"\'<>]+', html_doc) == []
 
 
-def test_node_count_matches_subgraph():
-    """Number of <circle> elements in SVG matches the number of rendered subgraph nodes."""
-    graph_path = Path(__file__).parent / "fixtures" / "graph.json"
-    graph = load_graph(graph_path)
-
-    changed = [
-        ChangedSymbol(file="pricing.py", qualname="pricing.apply_discount", kind="function")
-    ]
-    candidates, _ = compute_impact(graph, changed)
-    html_doc = build_ripple_map_html(
-        graph=graph,
-        changed_symbols=changed,
-        selected_tests=candidates,
-        total_suite_count=len(graph.nodes),
-    )
-
-    circle_count = html_doc.count("<circle")
-    assert circle_count > 0
-    assert circle_count <= 120
+def test_every_test_file_listed():
+    """Each test file RIPPLE selected gets a card."""
+    candidates, html_doc = _page()
+    for file in {c.file for c in candidates}:
+        assert f'<div class="fname">{file}</div>' in html_doc
 
 
-def test_colors_by_role():
-    """Output contains a changed node, a caller and a test for the mini_app change."""
-    graph_path = Path(__file__).parent / "fixtures" / "graph.json"
-    graph = load_graph(graph_path)
-
-    changed = [
-        ChangedSymbol(file="pricing.py", qualname="pricing.apply_discount", kind="function")
-    ]
-    candidates, _ = compute_impact(graph, changed)
-    html_doc = build_ripple_map_html(
-        graph=graph,
-        changed_symbols=changed,
-        selected_tests=candidates,
-        total_suite_count=len(graph.nodes),
-    )
-
-    # Orange for the change, grey for callers, blue for tests
-    assert 'fill="#eb6834"' in html_doc
-    assert 'fill="#898781"' in html_doc
-    assert 'fill="#2a78d6"' in html_doc
-
-
-def test_size_under_2mb():
-    """Generated standalone HTML document size is strictly under 2 MB."""
-    graph_path = Path(__file__).parent / "fixtures" / "graph.json"
-    graph = load_graph(graph_path)
-
-    changed = [
-        ChangedSymbol(file="pricing.py", qualname="pricing.apply_discount", kind="function")
-    ]
-    candidates, _ = compute_impact(graph, changed)
-    html_doc = build_ripple_map_html(
-        graph=graph,
-        changed_symbols=changed,
-        selected_tests=candidates,
-        total_suite_count=len(graph.nodes),
-    )
-
-    size_bytes = len(html_doc.encode("utf-8"))
-    assert size_bytes < 2 * 1024 * 1024, f"File size too large: {size_bytes} bytes"
+def test_code_that_uses_the_change_is_shown():
+    """Callers of apply_discount appear by step distance in the middle column."""
+    _, html_doc = _page()
+    assert "1 step away" in html_doc
+    assert '<span class="chip">get_total</span>' in html_doc
 
 
 def test_header_uses_suite_total_and_marks_failures():
-    """Header shows the real suite size; a failing test from the report is marked FAILED."""
-    graph_path = Path(__file__).parent / "fixtures" / "graph.json"
-    graph = load_graph(graph_path)
-
-    changed = [
-        ChangedSymbol(file="pricing.py", qualname="pricing.apply_discount", kind="function")
-    ]
-    candidates, _ = compute_impact(graph, changed)
-    report = {
-        "selected": len(candidates),
-        "suite_total": 18,
-        "results": {"passed": 5, "failed": 1, "failed_ids": ["tests/test_pricing.py::test_apply_discount"]},
-        "llm_status": "ok",
-        "model": "qwen3:4b-instruct",
-        "triage": {"change_kind": "behavior", "risk": 4, "summary": "Discount applied twice."},
-    }
-    html_doc = build_ripple_map_html(
-        graph=graph,
-        changed_symbols=changed,
-        selected_tests=candidates,
-        total_suite_count=18,
-        report=report,
-    )
-
+    """Header states functions vs test cases; the failing test and the AI's read are shown."""
+    candidates, html_doc = _page(REPORT)
     assert f"<strong>{len(candidates)}</strong> test functions" in html_doc
     assert "pytest ran 6 of 18 test cases" in html_doc
-    assert "✓ caught the bug" in html_doc
+    assert "test_cart_total</code> failed: this test caught the bug" in html_doc
     assert "Discount applied twice." in html_doc
     assert "Risk 4/5" in html_doc
 
 
-def test_import_fallback_tests_grouped_as_pill():
-    """Tests chosen by the import fallback appear as one pill per test file, not as nodes."""
-    graph_path = Path(__file__).parent / "fixtures" / "graph.json"
-    graph = load_graph(graph_path)
-
-    changed = [
-        ChangedSymbol(file="pricing.py", qualname="pricing.apply_discount", kind="function")
-    ]
-    candidates, _ = compute_impact(graph, changed)
+def test_import_fallback_tests_counted_as_run_to_be_safe():
+    """Tests chosen by the import fallback are counted separately from tests found via the code."""
+    candidates, html_doc = _page()
     assert any(c.source == "import_closure" for c in candidates)
-    html_doc = build_ripple_map_html(
-        graph=graph,
-        changed_symbols=changed,
-        selected_tests=candidates,
-        total_suite_count=18,
-    )
+    assert "1 run to be safe" in html_doc
 
-    assert "test_pricing.py · 1 more test<" in html_doc
-    assert "Test that checks it: test_calculate_tax" not in html_doc
+
+def test_size_under_2mb():
+    """Generated standalone HTML document size is strictly under 2 MB."""
+    _, html_doc = _page(REPORT)
+    assert len(html_doc.encode("utf-8")) < 2 * 1024 * 1024

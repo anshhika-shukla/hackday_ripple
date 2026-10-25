@@ -118,6 +118,15 @@ bash scripts/demo.sh            # plants a one-line bug in boltons, RIPPLE selec
 bash scripts/demo.sh mini_app   # same on the tiny shop app in tests/fixtures/mini_app
 ```
 
+### Live demo on a project you edit yourself
+```bash
+bash scripts/setup_demo_project.sh                    # examples/canteen -> targets/canteen (8 modules, 44 tests)
+# edit a line in targets/canteen (e.g. loyalty.py), then:
+.venv/bin/python -m ripple.cli check --repo targets/canteen --run
+bash scripts/check.sh targets/canteen                 # same, plus the dashboard's "Your latest check"
+git -C targets/canteen checkout -- .                  # undo the edit
+```
+
 ---
 
 ## 5. Benchmark Results & Ablation

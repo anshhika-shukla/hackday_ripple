@@ -3,69 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RIPPLE Change Map</title>
+  <title>RIPPLE Change Story</title>
   <style>
-    :root { color-scheme: light; --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --grid: #e1e0d9; --border: rgba(11,11,11,0.10); --code-bg: #f0efec; --pill: #ffffff; }
-    @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --pill: #262624; } }
-    :root[data-theme="dark"] { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --pill: #262624; }
-    body { margin: 0; padding: 20px 24px; background: var(--page); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    :root { color-scheme: light; --page: #f9f9f7; --surface: #ffffff; --ink: #0b0b0b; --ink-2: #52514e; --grid: #e1e0d9; --border: rgba(11,11,11,0.10); --code-bg: #f0efec; --test: #2a78d6; --change: #eb6834; --other: #c3c2b7; }
+    @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --test: #3987e5; --change: #d95926; --other: #52514e; } }
+    :root[data-theme="dark"] { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --test: #3987e5; --change: #d95926; --other: #52514e; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 20px 16px 40px; background: var(--page); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+    .wrap { max-width: 1200px; margin: 0 auto; }
     h1 { margin: 0 0 4px; font-size: 24px; }
-    h1 span { color: #2a78d6; }
-    .changed { color: var(--ink-2); font-size: 16px; margin-bottom: 14px; }
+    h1 span { color: var(--test); }
     code { font-family: ui-monospace, monospace; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
-    .stats { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+    .stats { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0 10px; }
     .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; }
     .k { font-size: 13px; color: var(--ink-2); }
     .v { font-size: 20px; }
     .v.small { font-size: 15px; padding-top: 4px; }
-    .v.caught { color: #2a78d6; font-weight: 700; }
-    .d { font-size: 13px; color: var(--ink-2); }
-    .model { font-size: 15px; margin-bottom: 8px; max-width: 1100px; line-height: 1.45; }
+    .caught-v { color: var(--test); font-weight: 700; }
+    .d, .muted { font-size: 14px; color: var(--ink-2); }
+    .model { font-size: 15px; margin-bottom: 8px; line-height: 1.45; }
     .model .k { margin-right: 6px; }
-    .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 10px 0; font-size: 14px; color: var(--ink-2); }
-    .legend span { display: inline-flex; align-items: center; gap: 6px; }
-    .dot { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
-    .chip { width: 24px; height: 13px; border-radius: 7px; display: inline-block; border: 1.5px dashed var(--ink-2); }
-    .container { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
-    svg { display: block; width: 100%; height: calc(100vh - 300px); min-height: 460px; }
-    svg .ring { fill: none; stroke: var(--grid); stroke-width: 2; }
-    svg .ring-fallback { stroke: var(--ink-2); stroke-opacity: 0.5; stroke-dasharray: 8 8; }
-    svg .ring-label { fill: var(--ink-2); font-size: 16px; font-family: system-ui, sans-serif; paint-order: stroke; stroke: var(--surface); stroke-width: 6px; }
-    svg .edge { stroke: var(--ink-2); stroke-opacity: 0.6; stroke-width: 2; }
-    svg .edge-fallback { stroke: var(--ink-2); stroke-opacity: 0.35; stroke-width: 1.5; stroke-dasharray: 4 6; }
-    svg .node { stroke-linejoin: round; }
-    svg .label { fill: var(--ink); font-size: 22px; font-weight: 600; font-family: system-ui, sans-serif; paint-order: stroke; stroke: var(--surface); stroke-width: 6px; }
-    svg .label-center { font-size: 24px; }
-    svg .failed { fill: #2a78d6; font-weight: 700; }
-    svg .pill { fill: var(--pill); stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
-    svg .pill-graph { stroke: #2a78d6; stroke-dasharray: none; }
-    svg .pill-failed { stroke: #eb6834; stroke-width: 3; stroke-dasharray: none; }
-    svg .pill-text { fill: var(--ink); font-size: 19px; font-family: system-ui, sans-serif; }
-    .note { font-size: 14px; color: var(--ink-2); margin-top: 8px; max-width: 1100px; }
+    .summary { font-size: 19px; margin: 14px 0 16px; max-width: 1000px; }
+    .story { display: grid; grid-template-columns: minmax(180px, 1fr) 28px minmax(220px, 1.4fr) 28px minmax(300px, 2.2fr); gap: 8px; align-items: start; }
+    .col { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+    .col h2 { margin: 0 0 10px; font-size: 16px; }
+    .col h2 i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; vertical-align: -1px; }
+    .arrow { align-self: center; text-align: center; font-size: 26px; color: var(--ink-2); }
+    .changed-box { border: 2px solid var(--change); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+    .changed-box code { font-size: 16px; font-weight: 600; background: none; padding: 0; }
+    .step-row { margin-bottom: 10px; }
+    .step-k { font-size: 13px; color: var(--ink-2); margin-bottom: 4px; }
+    .chip { display: inline-block; font: 13px ui-monospace, monospace; background: var(--code-bg); border-radius: 999px; padding: 2px 9px; margin: 0 4px 4px 0; }
+    .chip.more { font-family: system-ui, sans-serif; color: var(--ink-2); }
+    .file { border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+    .file.hit { border: 2px solid var(--change); }
+    .file.rest { color: var(--ink-2); font-size: 14px; }
+    .fname { font: 600 15px ui-monospace, monospace; overflow-wrap: anywhere; }
+    .bar { display: flex; gap: 2px; height: 10px; margin: 6px 0 4px; }
+    .seg { display: block; height: 100%; border-radius: 3px; }
+    .seg.g { background: var(--test); }
+    .seg.s { background: var(--other); }
+    .counts { font-size: 14px; color: var(--ink-2); }
+    .caught { margin-top: 6px; font-size: 14px; color: var(--change); font-weight: 600; }
+    details { margin-top: 6px; font-size: 14px; }
+    summary { cursor: pointer; color: var(--ink-2); }
+    ul { margin: 6px 0 0; padding-left: 18px; }
+    li { margin-bottom: 3px; }
+    .via { color: var(--ink-2); margin-left: 6px; font-size: 13px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 18px; font-size: 14px; color: var(--ink-2); margin: 0 0 10px; }
+    .legend i { display: inline-block; width: 22px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: 0; }
+    .note { font-size: 14px; color: var(--ink-2); margin-top: 14px; max-width: 1000px; }
+    @media (max-width: 900px) { .story { grid-template-columns: 1fr; } .arrow { transform: rotate(90deg); } }
   </style>
 </head>
 <body>
-  <h1><span>RIPPLE</span> · how one change spreads to the tests</h1>
-  <div class="changed">You changed <code>apply_discount</code> in pricing.py</div>
-  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>6</strong> test functions</span><span class="d">pytest ran 6 of 8 test cases (75.0%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught">✓ Bug caught</span><span class="d">4 tests failed, 2 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.00 s · AI 1.87 s · running them 0.18 s · all tests 3.00 s</span></div></div>
+<div class="wrap">
+  <h1><span>RIPPLE</span> · what your change could break</h1>
+  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>6</strong> test functions</span><span class="d">pytest ran 6 of 8 test cases (75.0%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught-v">✓ Bug caught</span><span class="d">4 tests failed, 2 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.00 s · AI 1.87 s · running them 0.18 s · all tests 3.00 s</span></div></div>
   <div class="model"><span class="k">The AI's read</span> <strong>Risk 3/5.</strong> The `apply_discount` function now adds the discount instead of subtracting it, which reverses the intended behavior. This change has a moderate risk of breaking callers who expect discount to reduce the price.</div>
-  <div class="model"><span class="k">Caught by</span> <code>tests/test_cart.py::test_cart_total</code> <code>tests/test_checkout.py::test_checkout_process</code> <code>tests/test_pricing.py::test_apply_discount</code> <code>tests/test_pricing.py::test_get_final_price</code></div>
-  <div class="legend">
-    <span><i class="dot" style="background:#eb6834"></i> Your change</span>
-    <span><i class="dot" style="background:#898781"></i> Code that uses it</span>
-    <span><i class="dot" style="background:#2a78d6"></i> Test that checks it</span>
-    <span><i class="dot" style="background:#2a78d6;box-shadow:0 0 0 3px #eb6834"></i> Test that caught the bug</span>
-    <span><i class="chip"></i> More tests run to be safe</span>
+  <p class="summary">RIPPLE followed the code from <code>apply_discount</code> to <strong>5</strong> tests, and ran <strong>1</strong> more from files that import the changed code, to be safe. <strong>4</strong> failed, so the bug was caught before it shipped.</p>
+  <div class="story">
+    <div class="col"><h2><i style="background:var(--change)"></i>1 · Your change</h2><div class="changed-box"><code>apply_discount</code><div class="muted">pricing.py</div></div></div>
+    <div class="arrow">→</div>
+    <div class="col"><h2><i style="background:#898781"></i>2 · Code that uses it</h2><div class="step-row"><div class="step-k">1 step away</div><div><span class="chip">get_final_price</span><span class="chip">get_total</span></div></div><div class="step-row"><div class="step-k">2 steps away</div><div><span class="chip">Cart</span><span class="chip">process_order</span></div></div></div>
+    <div class="arrow">→</div>
+    <div class="col"><h2><i style="background:var(--test)"></i>3 · Test files RIPPLE ran</h2>
+      <div class="legend"><span><i style="background:var(--test)"></i>found by following the code</span><span><i style="background:var(--other)"></i>run to be safe</span></div>
+      <div class="file hit"><div class="fname">tests/test_pricing.py</div><div class="bar" title="2 found by following the code, 1 run to be safe"><i class="seg g" style="width:66.7%"></i><i class="seg s" style="width:33.3%"></i></div><div class="counts"><strong>2</strong> found by following the code · 1 run to be safe</div><div class="caught">✗ <code>test_apply_discount</code> failed: this test caught the bug</div><div class="caught">✗ <code>test_get_final_price</code> failed: this test caught the bug</div><details><summary>Show the 2 tests found by following the code</summary><ul><li><code>test_apply_discount</code><span class="via">via a direct call</span></li><li><code>test_get_final_price</code><span class="via">via get_final_price</span></li></ul></details></div><div class="file hit"><div class="fname">tests/test_cart.py</div><div class="bar" title="2 found by following the code, 0 run to be safe"><i class="seg g" style="width:66.7%"></i><i class="seg s" style="width:0.0%"></i></div><div class="counts"><strong>2</strong> found by following the code</div><div class="caught">✗ <code>test_cart_total</code> failed: this test caught the bug</div><details><summary>Show the 2 tests found by following the code</summary><ul><li><code>test_cart_total</code><span class="via">via get_total</span></li><li><code>test_cart_add_item</code><span class="via">via get_total › Cart</span></li></ul></details></div><div class="file hit"><div class="fname">tests/test_checkout.py</div><div class="bar" title="1 found by following the code, 0 run to be safe"><i class="seg g" style="width:33.3%"></i><i class="seg s" style="width:0.0%"></i></div><div class="counts"><strong>1</strong> found by following the code</div><div class="caught">✗ <code>test_checkout_process</code> failed: this test caught the bug</div><details><summary>Show the 1 test found by following the code</summary><ul><li><code>test_checkout_process</code><span class="via">via get_total › Cart</span></li></ul></details></div>
+    </div>
   </div>
-  <div class="container">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-596 -685 1272 1230">
-  <g id="guides"><circle cx="0" cy="0" r="110" class="ring" /><text x="0" y="-110" dy="0.35em" text-anchor="middle" class="ring-label">1</text><circle cx="0" cy="0" r="220" class="ring" /><text x="0" y="-220" dy="0.35em" text-anchor="middle" class="ring-label">2</text><circle cx="0" cy="0" r="330" class="ring" /><text x="0" y="-330" dy="0.35em" text-anchor="middle" class="ring-label">3</text><circle cx="0" cy="0" r="396" class="ring ring-fallback" /></g>
-  <g id="edges"><line x1="0.0" y1="0.0" x2="-107.2" y2="-24.5" class="edge" /><line x1="47.7" y1="99.1" x2="-172.0" y2="137.2" class="edge" /><line x1="0.0" y1="0.0" x2="47.7" y2="99.1" class="edge" /><line x1="47.7" y1="-99.1" x2="95.5" y2="-198.2" class="edge" /><line x1="0.0" y1="0.0" x2="47.7" y2="-99.1" class="edge" /><line x1="214.5" y1="49.0" x2="321.7" y2="-73.4" class="edge" /><line x1="47.7" y1="99.1" x2="214.5" y2="49.0" class="edge" /><line x1="214.5" y1="49.0" x2="258.0" y2="205.8" class="edge" /><line x1="47.7" y1="99.1" x2="0.0" y2="220.0" class="edge" /><line x1="0" y1="0" x2="-171.8" y2="-356.8" class="edge edge-fallback" /></g>
-  <g id="nodes"><circle cx="0.0" cy="0.0" r="24" fill="#eb6834" class="node"><title>Your change: apply_discount (pricing.py:4), the code you changed</title></circle><circle cx="-107.2" cy="-24.5" r="15" fill="#2a78d6" class="node" stroke="#eb6834" stroke-width="5"><title>Test that checks it (this test failed: it caught the bug): test_apply_discount (tests/test_pricing.py:9), 1 step from your change</title></circle><circle cx="-172.0" cy="137.2" r="15" fill="#2a78d6" class="node" stroke="#eb6834" stroke-width="5"><title>Test that checks it (this test failed: it caught the bug): test_cart_total (tests/test_cart.py:14), 2 steps from your change</title></circle><circle cx="47.7" cy="99.1" r="12" fill="#898781" class="node"><title>Code that uses it: Cart.get_total (cart.py:21), 1 step from your change</title></circle><circle cx="95.5" cy="-198.2" r="15" fill="#2a78d6" class="node" stroke="#eb6834" stroke-width="5"><title>Test that checks it (this test failed: it caught the bug): test_get_final_price (tests/test_pricing.py:19), 2 steps from your change</title></circle><circle cx="47.7" cy="-99.1" r="12" fill="#898781" class="node"><title>Code that uses it: get_final_price (pricing.py:16), 1 step from your change</title></circle><circle cx="321.7" cy="-73.4" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_cart_add_item (tests/test_cart.py:7), 3 steps from your change</title></circle><circle cx="214.5" cy="49.0" r="12" fill="#898781" class="node"><title>Code that uses it: Cart (cart.py:11), 2 steps from your change</title></circle><circle cx="258.0" cy="205.8" r="15" fill="#2a78d6" class="node" stroke="#eb6834" stroke-width="5"><title>Test that checks it (this test failed: it caught the bug): test_checkout_process (tests/test_checkout.py:9), 3 steps from your change</title></circle><circle cx="0.0" cy="220.0" r="12" fill="#898781" class="node"><title>Code that uses it: process_order (checkout.py:13), 2 steps from your change</title></circle><g transform="translate(-171.8,-356.8) rotate(424.3)"><title>tests/test_pricing.py: 1 test(s) run to be safe, because this file imports the code you changed
-tests/test_pricing.py::test_calculate_tax</title><rect x="-330.5" y="-19" width="330.5" height="38" rx="19" class="pill" /><text x="-165.2" dy="0.35em" text-anchor="middle" class="pill-text">test_pricing.py · 1 more test</text></g></g>
-  <g id="labels"><text x="0.0" y="52.0" text-anchor="middle" class="label label-center">apply_discount</text><text transform="translate(-107.2,-24.5) rotate(372.9)" x="-21.0" dy="0.35em" text-anchor="end" class="label">test_apply_discount <tspan class="failed">✓ caught the bug</tspan></text><text transform="translate(-172.0,137.2) rotate(321.4)" x="-21.0" dy="0.35em" text-anchor="end" class="label">test_cart_total <tspan class="failed">✓ caught the bug</tspan></text><text x="47.7" y="135.1" text-anchor="middle" class="label">get_total</text><text transform="translate(95.5,-198.2) rotate(-64.3)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_get_final_price <tspan class="failed">✓ caught the bug</tspan></text><text x="47.7" y="-119.1" text-anchor="middle" class="label">get_final_price</text><text transform="translate(321.7,-73.4) rotate(-12.9)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_cart_add_item</text><text x="214.5" y="85.0" text-anchor="middle" class="label">Cart</text><text transform="translate(258.0,205.8) rotate(38.6)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_checkout_process <tspan class="failed">✓ caught the bug</tspan></text><text transform="translate(0.0,220.0) rotate(90.0)" x="18.0" dy="0.35em" text-anchor="start" class="label">process_order</text></g>
-</svg>
-  </div>
-  <div class="note">Read it from the middle out. Each ring is one step further from your change: ring 1 uses your code directly, ring 2 uses something on ring 1, and so on (up to 3). The dashed outer ring holds test files RIPPLE also runs to be safe, because they import the file you changed. Hover anything for details.</div>
+  <p class="note">How RIPPLE chose: it starts at your change and follows Graphify's code map to everything that uses it, up to 3 steps away. Tests reached that way are “found by following the code”. A map read from the source can miss links made while the program runs, so RIPPLE also runs every test file that imports the changed file (“run to be safe”). The AI never removes tests.</p>
+</div>
 </body>
 </html>
