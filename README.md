@@ -72,7 +72,7 @@ eval/: seeded mutants -> ground truth -> score strategies A/B/C
 ### Installation
 ```bash
 # 1. Clone repository
-git clone https://github.com/your-username/ripple.git
+git clone https://github.com/anshhika-shukla/hackday_ripple.git ripple
 cd ripple
 
 # 2. Create virtual environment & install dependencies
