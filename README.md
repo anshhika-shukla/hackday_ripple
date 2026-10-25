@@ -173,6 +173,12 @@ Reproduce: `N=60 bash scripts/run_eval.sh boltons` (also `click`, `mini_app`). F
 
 ---
 
+### Future work (not built yet)
+- **Qwen explains why a test failed:** after RIPPLE catches a failure, the local model reads the diff, the failing test and pytest's error message, and says which changed line broke it. This would give the model a job a graph cannot do; today its re-ordering of tests adds no measurable lift on boltons.
+- A benchmark on a slow test suite, to measure real time saved.
+
+---
+
 ## 6. Graphify Integration
 
 - **Core Dependency**: RIPPLE directly uses Graphify's static code graph (`graphify extract . --code-only`) to discover call relations, class hierarchies, and import dependencies.
