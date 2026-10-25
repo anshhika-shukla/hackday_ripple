@@ -15,7 +15,7 @@ from ripple.graphio import load_graph
 from ripple.impact import baseline_ranking_b, compute_impact
 from ripple.llm import OllamaClient
 from ripple.report import Report, generate_brief
-from ripple.runner import run_tests
+from ripple.runner import count_suite_tests, run_tests
 from ripple.triage import select_and_rank_tests
 
 try:
@@ -92,7 +92,7 @@ def handle_check(args: argparse.Namespace) -> int:
         mode=mode,
         budget_k=budget_k,
         no_llm=no_llm,
-        use_cache=True,
+        use_cache=not args.no_cache,
     )
     llm_duration = time.time() - start_llm
 
@@ -110,6 +110,16 @@ def handle_check(args: argparse.Namespace) -> int:
         }
     tests_duration = time.time() - start_tests
 
+    timing = {
+        "graph_s": round(graph_duration, 3),
+        "llm_s": round(llm_duration, 3),
+        "tests_s": round(tests_duration, 3),
+    }
+    if do_run and args.baseline:
+        # Measure the full suite for an honest "time saved" comparison.
+        full = run_tests(test_ids=["."], repo_path=repo, timeout_s=config.timeout_s * 10)
+        timing["full_suite_s"] = full.duration_s
+
     # 5. Build report
     total_candidates = len(selected) if llm_status == "skipped_deterministic" else len(compute_impact(graph, changed_symbols)[0])
     report = Report(
@@ -119,16 +129,12 @@ def handle_check(args: argparse.Namespace) -> int:
         changed=[s.model_dump() for s in changed_symbols],
         candidates_total=total_candidates,
         selected=len(selected),
-        suite_total=len(graph.nodes),
+        suite_total=count_suite_tests(repo),
         results=results_dict,
-        timing={
-            "graph_s": round(graph_duration, 3),
-            "llm_s": round(llm_duration, 3),
-            "tests_s": round(tests_duration, 3),
-            "full_suite_s": 15.0,
-        },
-        tokens_per_sec=25.0,
+        timing=timing,
+        tokens_per_sec=round(sum(client.token_rates) / len(client.token_rates), 2) if client.token_rates else 0.0,
         guardrails_fired=guardrails,
+        triage=triage.model_dump(include={"change_kind", "risk", "summary"}) if triage else {},
     )
 
     brief_md = generate_brief(report)
@@ -172,10 +178,13 @@ def handle_install_hook(args: argparse.Namespace) -> int:
         return 2
 
     hook_file = hook_dir / "pre-push"
-    hook_script = """#!/usr/bin/env bash
+    # Compare against what the remote already has (committed changes are what get pushed),
+    # and call RIPPLE through the interpreter it is installed in, so no activated venv is needed.
+    hook_script = f"""#!/usr/bin/env bash
 # RIPPLE pre-push hook: run selected tests offline
 echo "🌊 RIPPLE pre-push test selection..."
-ripple check --run --mode budget --k 10
+BASE=$(git rev-parse --abbrev-ref --symbolic-full-name @{{u}} 2>/dev/null || echo HEAD~1)
+"{sys.executable}" -m ripple.cli check --repo . --base "$BASE" --run --mode budget --k 10
 EXIT_CODE=$?
 if [ $EXIT_CODE -ne 0 ]; then
     echo "❌ RIPPLE caught test failures. Push aborted."
@@ -243,6 +252,8 @@ def build_parser() -> argparse.ArgumentParser:
     check_parser.add_argument("--mode", choices=["safe", "budget"], default="safe", help="Execution mode")
     check_parser.add_argument("--k", type=int, default=10, help="Candidate budget for budget mode")
     check_parser.add_argument("--no-llm", action="store_true", help="Bypass LLM and use graph ranking only")
+    check_parser.add_argument("--no-cache", action="store_true", help="Ask the model again instead of reusing a cached answer")
+    check_parser.add_argument("--baseline", action="store_true", help="With --run, also time the full suite to report time saved")
     check_parser.add_argument("--run", action="store_true", help="Execute the selected tests (default is dry-run)")
     check_parser.add_argument("--json", dest="json_out", default=None, help="Path to export report.json")
 

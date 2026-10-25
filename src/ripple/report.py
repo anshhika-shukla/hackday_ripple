@@ -19,6 +19,19 @@ class Report(BaseModel):
     timing: dict[str, float] = Field(default_factory=dict)
     tokens_per_sec: float = 0.0
     guardrails_fired: list[str] = Field(default_factory=list)
+    triage: dict[str, Any] = Field(default_factory=dict)  # model's change_kind, risk, summary
+
+
+def _triage_line(report: Report) -> str:
+    """What the local model said about the change, or why it said nothing."""
+    if report.llm_status == "ok" and report.triage:
+        t = report.triage
+        return f"- **Model's read** ({report.model}): {t.get('change_kind')} change, risk {t.get('risk')}/5. {t.get('summary', '')}"
+    if report.llm_status == "fallback":
+        return "- **Model's read**: model unavailable or invalid output; tests ranked by the graph only (G4)"
+    if report.llm_status == "skipped_deterministic":
+        return "- **Model's read**: not needed; the change is comments/docstrings only (G2)"
+    return "- **Model's read**: model disabled (--no-llm); tests ranked by the graph only"
 
 
 def generate_brief(report: Report) -> str:
@@ -26,9 +39,9 @@ def generate_brief(report: Report) -> str:
     status_icon = "✅" if report.results.get("failed", 0) == 0 else "❌"
     outcome_str = "PASSED" if report.results.get("failed", 0) == 0 else "FAILED"
 
-    full_s = report.timing.get("full_suite_s", 15.0)
+    full_s = report.timing.get("full_suite_s")
     test_s = report.timing.get("tests_s", 0.0)
-    time_saved = max(0.0, round(full_s - test_s, 1))
+    ripple_s = test_s + report.timing.get("graph_s", 0.0) + report.timing.get("llm_s", 0.0)
 
     symbols_list = []
     for s in report.changed:
@@ -47,6 +60,7 @@ def generate_brief(report: Report) -> str:
         f"- **Ripple Scope**: Selected **{report.selected}** of **{report.suite_total or report.candidates_total}** tests ({report.candidates_total} candidates identified)",
         f"- **Execution Mode**: `{report.mode.upper()}` (LLM Status: `{report.llm_status}`)",
         f"- **Guardrails Triggered**: `{guardrails_text}`",
+        _triage_line(report),
         f"- **Results**: {report.results.get('passed', 0)} passed, {report.results.get('failed', 0)} failed",
     ]
 
@@ -63,9 +77,12 @@ def generate_brief(report: Report) -> str:
             "### ⏱️ Performance & Timing",
             f"- Graph Impact Analysis: {report.timing.get('graph_s', 0.0):.2f}s",
             f"- Local LLM Triage/Rank: {report.timing.get('llm_s', 0.0):.2f}s",
-            f"- Pytest Subset Execution: {report.timing.get('tests_s', 0.0):.2f}s (Full suite: {full_s:.1f}s)",
-            f"- **Estimated Time Saved**: **~{time_saved}s**",
+            f"- Pytest Subset Execution: {test_s:.2f}s",
         ]
     )
+    if report.tokens_per_sec:
+        brief_lines.append(f"- Model speed: {report.tokens_per_sec:.1f} tokens/sec")
+    if full_s is not None:
+        brief_lines.append(f"- Full suite (measured): {full_s:.2f}s vs RIPPLE total {ripple_s:.2f}s")
 
     return "\n".join(brief_lines)

@@ -1,6 +1,10 @@
 """Test runner: executes selected pytest tests safely in read-only mode."""
 
+import os
+import re
+import sys
 import subprocess
+import tempfile
 import time
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
@@ -32,9 +36,11 @@ def run_tests(
         return TestResult(passed=0, failed=0, skipped=0, failed_ids=[], duration_s=0.0, exit_code=0)
 
     repo = Path(repo_path).resolve()
-    xml_path = junit_xml_path or (repo / ".ripple_junit.xml")
+    # G6: nothing is written into the target repo (no junit file, bytecode or pytest cache).
+    xml_path = junit_xml_path or Path(tempfile.mkdtemp(prefix="ripple_")) / "junit.xml"
+    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
 
-    cmd = ["pytest", "-q", f"--junitxml={xml_path}"] + test_ids
+    cmd = [sys.executable, "-m", "pytest", "-q", "-rfE", "-p", "no:cacheprovider", f"--junitxml={xml_path}"] + test_ids
     start_time = time.time()
 
     try:
@@ -44,6 +50,7 @@ def run_tests(
             capture_output=True,
             text=True,
             timeout=timeout_s,
+            env=env,
         )
         duration = time.time() - start_time
         exit_code = proc.returncode
@@ -117,6 +124,11 @@ def run_tests(
             failed = 1
             failed_ids = test_ids[:1]
 
+    # Prefer real pytest node ids from the "FAILED <id> - ..." summary lines over junit classnames.
+    summary_ids = re.findall(r"^(?:FAILED|ERROR) (\S+)", proc.stdout, flags=re.MULTILINE)
+    if summary_ids:
+        failed_ids = summary_ids
+
     return TestResult(
         passed=passed,
         failed=failed,
@@ -126,3 +138,17 @@ def run_tests(
         exit_code=0 if failed == 0 else 1,
         timed_out=timed_out,
     )
+
+
+def count_suite_tests(repo_path: Path, timeout_s: float = 60.0) -> int:
+    """Number of tests pytest collects in the repo (0 if collection fails)."""
+    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
+    cmd = [sys.executable, "-m", "pytest", "--collect-only", "-q", "-p", "no:cacheprovider"]
+    try:
+        proc = subprocess.run(cmd, cwd=str(repo_path), capture_output=True, text=True, timeout=timeout_s, env=env)
+    except Exception:
+        return 0
+    match = re.search(r"(\d+) tests? collected", proc.stdout)
+    if match:
+        return int(match.group(1))
+    return sum(1 for line in proc.stdout.splitlines() if "::" in line)

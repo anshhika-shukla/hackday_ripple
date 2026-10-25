@@ -94,7 +94,7 @@ def verify_drafted_test_on_baseline(
         temp_file.write_text(drafted_code, encoding="utf-8")
 
     try:
-        cmd = ["pytest", "-q", "--tb=no", str(temp_file.name)]
+        cmd = [sys.executable, "-m", "pytest", "-q", "--tb=no", str(temp_file.name)]
         proc = subprocess.run(cmd, cwd=str(repo_path), capture_output=True, text=True, timeout=10.0)
         return proc.returncode == 0
     except Exception:
