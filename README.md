@@ -166,7 +166,6 @@ Reproduce: `N=60 bash scripts/run_eval.sh boltons` (also `click`, `mini_app`). F
 | Ollama | model runtime | MIT |
 | Graphify (`graphifyy`) | code graph | Apache-2.0 |
 | networkx | graph traversal | BSD-3-Clause |
-| numpy | ripple map layout | BSD-3-Clause (bundled parts: 0BSD, MIT, Zlib) |
 | pydantic | schema validation | MIT |
 | ollama (Python client) | model calls | MIT |
 | pytest, pytest-xdist | test runner | MIT |

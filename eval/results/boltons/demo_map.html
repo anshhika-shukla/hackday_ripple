@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RIPPLE Change Map</title>
+  <style>
+    :root { color-scheme: light; --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --grid: #e1e0d9; --border: rgba(11,11,11,0.10); --code-bg: #f0efec; --pill: #ffffff; }
+    @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --pill: #262624; } }
+    :root[data-theme="dark"] { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --pill: #262624; }
+    body { margin: 0; padding: 20px 24px; background: var(--page); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    h1 { margin: 0 0 4px; font-size: 24px; }
+    h1 span { color: #2a78d6; }
+    .changed { color: var(--ink-2); font-size: 16px; margin-bottom: 14px; }
+    code { font-family: ui-monospace, monospace; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+    .stats { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; }
+    .k { font-size: 13px; color: var(--ink-2); }
+    .v { font-size: 20px; }
+    .v.small { font-size: 15px; padding-top: 4px; }
+    .v.caught { color: #2a78d6; font-weight: 700; }
+    .d { font-size: 13px; color: var(--ink-2); }
+    .model { font-size: 15px; margin-bottom: 8px; max-width: 1100px; line-height: 1.45; }
+    .model .k { margin-right: 6px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 10px 0; font-size: 14px; color: var(--ink-2); }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .dot { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
+    .chip { width: 24px; height: 13px; border-radius: 7px; display: inline-block; border: 1.5px dashed var(--ink-2); }
+    .container { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+    svg { display: block; width: 100%; height: calc(100vh - 300px); min-height: 460px; }
+    svg .ring { fill: none; stroke: var(--grid); stroke-width: 2; }
+    svg .ring-fallback { stroke: var(--ink-2); stroke-opacity: 0.5; stroke-dasharray: 8 8; }
+    svg .ring-label { fill: var(--ink-2); font-size: 16px; font-family: system-ui, sans-serif; paint-order: stroke; stroke: var(--surface); stroke-width: 6px; }
+    svg .edge { stroke: var(--ink-2); stroke-opacity: 0.6; stroke-width: 2; }
+    svg .edge-fallback { stroke: var(--ink-2); stroke-opacity: 0.35; stroke-width: 1.5; stroke-dasharray: 4 6; }
+    svg .node { stroke-linejoin: round; }
+    svg .label { fill: var(--ink); font-size: 22px; font-weight: 600; font-family: system-ui, sans-serif; paint-order: stroke; stroke: var(--surface); stroke-width: 6px; }
+    svg .label-center { font-size: 24px; }
+    svg .failed { fill: #2a78d6; font-weight: 700; }
+    svg .pill { fill: var(--pill); stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    svg .pill-graph { stroke: #2a78d6; stroke-dasharray: none; }
+    svg .pill-failed { stroke: #eb6834; stroke-width: 3; stroke-dasharray: none; }
+    svg .pill-text { fill: var(--ink); font-size: 19px; font-family: system-ui, sans-serif; }
+    .note { font-size: 14px; color: var(--ink-2); margin-top: 8px; max-width: 1100px; }
+  </style>
+</head>
+<body>
+  <h1><span>RIPPLE</span> · how one change spreads to the tests</h1>
+  <div class="changed">You changed <code>human_readable_list</code> in boltons/strutils.py</div>
+  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>34</strong> of 519 (6.6%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught">✓ Bug caught</span><span class="d">1 test failed, 34 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.04 s · AI 1.88 s · running them 0.26 s · all tests 1.98 s</span></div></div>
+  <div class="model"><span class="k">The AI's read</span> <strong>Risk 3/5.</strong> Modified human_readable_list to incorrectly repeat items[1] in the output, potentially breaking expected behavior for lists with two or more items.</div>
+  <div class="model"><span class="k">Caught by</span> <code>tests/test_strutils.py::test_human_readable_list</code></div>
+  <div class="legend">
+    <span><i class="dot" style="background:#eb6834"></i> Your change</span>
+    <span><i class="dot" style="background:#898781"></i> Code that uses it</span>
+    <span><i class="dot" style="background:#2a78d6"></i> Test that checks it</span>
+    <span><i class="dot" style="background:#2a78d6;box-shadow:0 0 0 3px #eb6834"></i> Test that caught the bug</span>
+    <span><i class="chip"></i> More tests run to be safe</span>
+  </div>
+  <div class="container">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-410 -485 895 970">
+  <g id="guides"><circle cx="0" cy="0" r="110" class="ring" /><text x="0" y="-110" dy="0.35em" text-anchor="middle" class="ring-label">1</text><circle cx="0" cy="0" r="176" class="ring ring-fallback" /></g>
+  <g id="edges"><line x1="0.0" y1="0.0" x2="77.8" y2="-77.8" class="edge" /><line x1="0.0" y1="0.0" x2="77.8" y2="77.8" class="edge" /><line x1="0" y1="0" x2="-124.5" y2="124.5" class="edge edge-fallback" /><line x1="0" y1="0" x2="-124.5" y2="-124.5" class="edge edge-fallback" /></g>
+  <g id="nodes"><circle cx="0.0" cy="0.0" r="24" fill="#eb6834" class="node"><title>Your change: human_readable_list (boltons/strutils.py:1302), the code you changed</title></circle><circle cx="77.8" cy="-77.8" r="15" fill="#2a78d6" class="node" stroke="#eb6834" stroke-width="5"><title>Test that checks it (this test failed: it caught the bug): test_human_readable_list (tests/test_strutils.py:167), 1 step from your change</title></circle><circle cx="77.8" cy="77.8" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_human_readable_list_type_annotations (tests/test_strutils.py:252), 1 step from your change</title></circle><g transform="translate(-124.5,124.5) rotate(315.0)"><title>tests/test_fileutils.py: 8 test(s) run to be safe, because this file imports the code you changed
+tests/test_fileutils.py::test_atomicsaver_pathlike
+tests/test_fileutils.py::test_fileperms
+tests/test_fileutils.py::test_iter_find_files
+tests/test_fileutils.py::test_iter_find_files_pathlike
+tests/test_fileutils.py::test_rotate_file_full_rotation
+tests/test_fileutils.py::test_rotate_file_full_rotation_no_ext
+tests/test_fileutils.py::test_rotate_file_no_rotation
+tests/test_fileutils.py::test_rotate_file_one_rotation</title><rect x="-362.0" y="-19" width="362.0" height="38" rx="19" class="pill" /><text x="-181.0" dy="0.35em" text-anchor="middle" class="pill-text">test_fileutils.py · 8 more tests</text></g><g transform="translate(-124.5,-124.5) rotate(405.0)"><title>tests/test_strutils.py: 24 test(s) run to be safe, because this file imports the code you changed
+tests/test_strutils.py::TestMultiReplace::test_shortcut_function
+tests/test_strutils.py::TestMultiReplace::test_simple_substitutions
+tests/test_strutils.py::TestMultiReplace::test_sub_with_compiled_regex
+tests/test_strutils.py::TestMultiReplace::test_sub_with_list
+tests/test_strutils.py::TestMultiReplace::test_sub_with_regex
+tests/test_strutils.py::TestMultiReplace::test_substitutions_in_word
+tests/test_strutils.py::TestMultiReplace::test_substitutions_with_regex_chars
+tests/test_strutils.py::test_args2cmd_sep
+tests/test_strutils.py::test_args2sh_sep
+tests/test_strutils.py::test_asciify
+tests/test_strutils.py::test_bytes2human
+tests/test_strutils.py::test_ellipsize
+tests/test_strutils.py::test_format_int_list
+tests/test_strutils.py::test_indent
+tests/test_strutils.py::test_indent_unicode_line_endings
+tests/test_strutils.py::test_is_uuid
+tests/test_strutils.py::test_iter_splitlines_preserves_numbers_after_spaces
+tests/test_strutils.py::test_iter_splitlines_unicode_line_endings
+tests/test_strutils.py::test_multi_replace_empty_mapping
+tests/test_strutils.py::test_parse_int_list
+tests/test_strutils.py::test_pluralize_x
+tests/test_strutils.py::test_roundzip
+tests/test_strutils.py::test_singularize_double_s
+tests/test_strutils.py::test_strip_ansi</title><rect x="-362.0" y="-19" width="362.0" height="38" rx="19" class="pill" /><text x="-181.0" dy="0.35em" text-anchor="middle" class="pill-text">test_strutils.py · 24 more tests</text></g></g>
+  <g id="labels"><text x="0.0" y="52.0" text-anchor="middle" class="label label-center">human_readable_list</text><text transform="translate(77.8,-77.8) rotate(-45.0)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_human_readable_list <tspan class="failed">✓ caught the bug</tspan></text><text transform="translate(77.8,77.8) rotate(45.0)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_human_readable_list_type_annotations</text></g>
+</svg>
+  </div>
+  <div class="note">Read it from the middle out. Each ring is one step further from your change: ring 1 uses your code directly, ring 2 uses something on ring 1, and so on (up to 3). The dashed outer ring holds test files RIPPLE also runs to be safe, because they import the file you changed. Hover anything for details.</div>
+</body>
+</html>

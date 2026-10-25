@@ -269,6 +269,7 @@ def build_parser() -> argparse.ArgumentParser:
     map_parser.add_argument("--repo", default=".", help="Path to git repository")
     map_parser.add_argument("--graph", default=None, help="Path to Graphify graph.json")
     map_parser.add_argument("--out", default="ripple_map.html", help="Output HTML file path")
+    map_parser.add_argument("--report", default=None, help="report.json from `ripple check --json`, to show results on the map")
 
     # draft-tests subcommand (stretch feature)
     draft_parser = subparsers.add_parser("draft-tests", help="Draft pytest tests for untested changed symbols")

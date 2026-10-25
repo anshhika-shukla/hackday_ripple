@@ -14,7 +14,6 @@ authors = [
 ]
 dependencies = [
     "networkx>=3.0",
-    "numpy>=1.24",
     "pydantic>=2.0.0",
     "ollama>=0.3.0",
     "pytest>=7.0.0",

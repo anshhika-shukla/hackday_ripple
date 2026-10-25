@@ -35,6 +35,7 @@ def main():
     print(f"Serving workspace: {DIRECTORY}")
     print(f"URL: {url}")
     print(f"  - Dashboard:   {url}/")
+    print(f"  - Results:     {url}/results.html   (tabs: #boltons #click #mini_app)")
     print(f"  - Impact Map:  {url}/ripple_map.html")
     print(f"  - Pitch Deck:  {url}/docs/pitch_deck.html")
     print(f"  - Code Graph:  {url}/graphify-out/graph.html")

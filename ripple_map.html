@@ -2,163 +2,70 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>RIPPLE Impact Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RIPPLE Change Map</title>
   <style>
-    body {
-      margin: 0;
-      padding: 24px;
-      background: #0f172a;
-      color: #f8fafc;
-      font-family: system-ui, -apple-system, sans-serif;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      font-weight: 700;
-      color: #38bdf8;
-    }
-    .stat-badge {
-      font-size: 16px;
-      font-weight: 600;
-      background: #1e293b;
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: 1px solid #334155;
-    }
-    .legend {
-      display: flex;
-      gap: 16px;
-      margin-bottom: 16px;
-      font-size: 13px;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .container {
-      border: 1px solid #334155;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-    }
+    :root { color-scheme: light; --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink-2: #52514e; --grid: #e1e0d9; --border: rgba(11,11,11,0.10); --code-bg: #f0efec; --pill: #ffffff; }
+    @media (prefers-color-scheme: dark) { :root:where(:not([data-theme="light"])) { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --pill: #262624; } }
+    :root[data-theme="dark"] { color-scheme: dark; --page: #0d0d0d; --surface: #1a1a19; --ink: #f0efec; --ink-2: #c3c2b7; --grid: #2c2c2a; --border: rgba(255,255,255,0.10); --code-bg: #262624; --pill: #262624; }
+    body { margin: 0; padding: 20px 24px; background: var(--page); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+    h1 { margin: 0 0 4px; font-size: 24px; }
+    h1 span { color: #2a78d6; }
+    .changed { color: var(--ink-2); font-size: 16px; margin-bottom: 14px; }
+    code { font-family: ui-monospace, monospace; background: var(--code-bg); padding: 1px 6px; border-radius: 4px; overflow-wrap: anywhere; }
+    .stats { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 10px; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 14px; display: flex; flex-direction: column; gap: 2px; }
+    .k { font-size: 13px; color: var(--ink-2); }
+    .v { font-size: 20px; }
+    .v.small { font-size: 15px; padding-top: 4px; }
+    .v.caught { color: #2a78d6; font-weight: 700; }
+    .d { font-size: 13px; color: var(--ink-2); }
+    .model { font-size: 15px; margin-bottom: 8px; max-width: 1100px; line-height: 1.45; }
+    .model .k { margin-right: 6px; }
+    .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 10px 0; font-size: 14px; color: var(--ink-2); }
+    .legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .dot { width: 13px; height: 13px; border-radius: 50%; display: inline-block; }
+    .chip { width: 24px; height: 13px; border-radius: 7px; display: inline-block; border: 1.5px dashed var(--ink-2); }
+    .container { border: 1px solid var(--border); border-radius: 10px; background: var(--surface); }
+    svg { display: block; width: 100%; height: calc(100vh - 300px); min-height: 460px; }
+    svg .ring { fill: none; stroke: var(--grid); stroke-width: 2; }
+    svg .ring-fallback { stroke: var(--ink-2); stroke-opacity: 0.5; stroke-dasharray: 8 8; }
+    svg .ring-label { fill: var(--ink-2); font-size: 16px; font-family: system-ui, sans-serif; paint-order: stroke; stroke: var(--surface); stroke-width: 6px; }
+    svg .edge { stroke: var(--ink-2); stroke-opacity: 0.6; stroke-width: 2; }
+    svg .edge-fallback { stroke: var(--ink-2); stroke-opacity: 0.35; stroke-width: 1.5; stroke-dasharray: 4 6; }
+    svg .node { stroke-linejoin: round; }
+    svg .label { fill: var(--ink); font-size: 22px; font-weight: 600; font-family: system-ui, sans-serif; paint-order: stroke; stroke: var(--surface); stroke-width: 6px; }
+    svg .label-center { font-size: 24px; }
+    svg .failed { fill: #2a78d6; font-weight: 700; }
+    svg .pill { fill: var(--pill); stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
+    svg .pill-graph { stroke: #2a78d6; stroke-dasharray: none; }
+    svg .pill-failed { stroke: #eb6834; stroke-width: 3; stroke-dasharray: none; }
+    svg .pill-text { fill: var(--ink); font-size: 19px; font-family: system-ui, sans-serif; }
+    .note { font-size: 14px; color: var(--ink-2); margin-top: 8px; max-width: 1100px; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h1>🌊 RIPPLE Code Ripple Map</h1>
-    <div class="stat-badge">
-      <strong>34</strong> of <strong>2457</strong> tests selected
-    </div>
-  </div>
-
+  <h1><span>RIPPLE</span> · how one change spreads to the tests</h1>
+  <div class="changed">You changed <code>apply_discount</code> in pricing.py</div>
+  <div class="stats"><div class="stat"><span class="k">Tests RIPPLE picked</span><span class="v"><strong>6</strong> of 8 (75.0%)</span></div><div class="stat"><span class="k">Result</span><span class="v caught">✓ Bug caught</span><span class="d">4 tests failed, 2 passed</span></div><div class="stat"><span class="k">Time</span><span class="v small">finding tests 0.00 s · AI 1.87 s · running them 0.18 s · all tests 3.00 s</span></div></div>
+  <div class="model"><span class="k">The AI's read</span> <strong>Risk 3/5.</strong> The `apply_discount` function now adds the discount instead of subtracting it, which reverses the intended behavior. This change has a moderate risk of breaking callers who expect discount to reduce the price.</div>
+  <div class="model"><span class="k">Caught by</span> <code>tests/test_cart.py::test_cart_total</code> <code>tests/test_checkout.py::test_checkout_process</code> <code>tests/test_pricing.py::test_apply_discount</code> <code>tests/test_pricing.py::test_get_final_price</code></div>
   <div class="legend">
-    <div class="legend-item"><span class="dot" style="background:#ef4444"></span> Changed Symbol (Origin)</div>
-    <div class="legend-item"><span class="dot" style="background:#f59e0b"></span> Impacted Function / Method</div>
-    <div class="legend-item"><span class="dot" style="background:#10b981"></span> Selected Test Case</div>
+    <span><i class="dot" style="background:#eb6834"></i> Your change</span>
+    <span><i class="dot" style="background:#898781"></i> Code that uses it</span>
+    <span><i class="dot" style="background:#2a78d6"></i> Test that checks it</span>
+    <span><i class="dot" style="background:#2a78d6;box-shadow:0 0 0 3px #eb6834"></i> Test that caught the bug</span>
+    <span><i class="chip"></i> More tests run to be safe</span>
   </div>
-
   <div class="container">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="100%" height="100%" style="background-color: #111827; border-radius: 8px;">
-  <!-- Edges -->
-  <g id="edges">
-    <line x1="111.4" y1="318.8" x2="471.5" y2="200.6" stroke="#374151" stroke-width="1.5" stroke-opacity="0.6" /><line x1="114.9" y1="276.8" x2="471.5" y2="200.6" stroke="#374151" stroke-width="1.5" stroke-opacity="0.6" /><line x1="733.7" y1="159.0" x2="471.5" y2="200.6" stroke="#374151" stroke-width="1.5" stroke-opacity="0.6" /><line x1="405.2" y1="80.0" x2="471.5" y2="200.6" stroke="#374151" stroke-width="1.5" stroke-opacity="0.6" />
-  </g>
-  <!-- Nodes -->
-  <g id="nodes">
-    <circle cx="125.5" cy="494.8" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_indent_unicode_line_endings (tests_test_strutils_test_indent_unicode_line_endings)</title>
-</circle><circle cx="277.6" cy="558.4" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_rotate_file_full_rotation_no_ext (tests_test_fileutils_test_rotate_file_full_rotation_no_ext)</title>
-</circle><circle cx="920.0" cy="387.9" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: TestMultiReplace.test_sub_with_list (tests_test_strutils_testmultireplace_test_sub_with_list)</title>
-</circle><circle cx="502.9" cy="81.3" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: TestMultiReplace.test_sub_with_compiled_regex (tests_test_strutils_testmultireplace_test_sub_with_compiled_regex)</title>
-</circle><circle cx="111.4" cy="318.8" r="9" fill="#f59e0b" stroke="#111827" stroke-width="2">
-  <title>Impacted Node: strutils.py (boltons_strutils)</title>
-</circle><circle cx="736.7" cy="564.2" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_rotate_file_no_rotation (tests_test_fileutils_test_rotate_file_no_rotation)</title>
-</circle><circle cx="277.5" cy="120.2" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_is_uuid (tests_test_strutils_test_is_uuid)</title>
-</circle><circle cx="304.3" cy="595.6" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: TestMultiReplace.test_shortcut_function (tests_test_strutils_testmultireplace_test_shortcut_function)</title>
-</circle><circle cx="133.6" cy="245.9" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_fileperms (tests_test_fileutils_test_fileperms)</title>
-</circle><circle cx="796.1" cy="134.5" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_parse_int_list (tests_test_strutils_test_parse_int_list)</title>
-</circle><circle cx="605.3" cy="616.2" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_iter_find_files_pathlike (tests_test_fileutils_test_iter_find_files_pathlike)</title>
-</circle><circle cx="120.0" cy="433.2" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_asciify (tests_test_strutils_test_asciify)</title>
-</circle><circle cx="861.3" cy="197.8" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_args2sh_sep (tests_test_strutils_test_args2sh_sep)</title>
-</circle><circle cx="661.7" cy="580.5" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_pluralize_x (tests_test_strutils_test_pluralize_x)</title>
-</circle><circle cx="867.6" cy="294.0" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_rotate_file_one_rotation (tests_test_fileutils_test_rotate_file_one_rotation)</title>
-</circle><circle cx="114.9" cy="276.8" r="9" fill="#f59e0b" stroke="#111827" stroke-width="2">
-  <title>Impacted Node: Given a list of strings, return a human readable string with appropriate… (boltons_strutils_rationale_1303)</title>
-</circle><circle cx="200.8" cy="478.8" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_bytes2human (tests_test_strutils_test_bytes2human)</title>
-</circle><circle cx="389.1" cy="606.6" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: TestMultiReplace.test_substitutions_with_regex_chars (tests_test_strutils_testmultireplace_test_substitutions_with_regex_chars)</title>
-</circle><circle cx="865.8" cy="246.1" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_strip_ansi (tests_test_strutils_test_strip_ansi)</title>
-</circle><circle cx="565.2" cy="108.3" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: TestMultiReplace.test_simple_substitutions (tests_test_strutils_testmultireplace_test_simple_substitutions)</title>
-</circle><circle cx="379.3" cy="118.7" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_multi_replace_empty_mapping (tests_test_strutils_test_multi_replace_empty_mapping)</title>
-</circle><circle cx="733.7" cy="159.0" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_human_readable_list_type_annotations (tests_test_strutils_test_human_readable_list_type_annotations)</title>
-</circle><circle cx="532.8" cy="596.4" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_singularize_double_s (tests_test_strutils_test_singularize_double_s)</title>
-</circle><circle cx="467.8" cy="620.0" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_args2cmd_sep (tests_test_strutils_test_args2cmd_sep)</title>
-</circle><circle cx="200.4" cy="540.2" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_atomicsaver_pathlike (tests_test_fileutils_test_atomicsaver_pathlike)</title>
-</circle><circle cx="275.0" cy="161.4" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_roundzip (tests_test_strutils_test_roundzip)</title>
-</circle><circle cx="856.4" cy="421.1" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_ellipsize (tests_test_strutils_test_ellipsize)</title>
-</circle><circle cx="405.2" cy="80.0" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_human_readable_list (tests_test_strutils_test_human_readable_list)</title>
-</circle><circle cx="80.0" cy="391.2" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_indent (tests_test_strutils_test_indent)</title>
-</circle><circle cx="792.5" cy="499.8" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: TestMultiReplace.test_sub_with_regex (tests_test_strutils_testmultireplace_test_sub_with_regex)</title>
-</circle><circle cx="884.4" cy="469.6" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_format_int_list (tests_test_strutils_test_format_int_list)</title>
-</circle><circle cx="131.3" cy="207.7" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_iter_splitlines_unicode_line_endings (tests_test_strutils_test_iter_splitlines_unicode_line_endings)</title>
-</circle><circle cx="471.5" cy="200.6" r="14" fill="#ef4444" stroke="#111827" stroke-width="2">
-  <title>Changed Symbol: human_readable_list (boltons_strutils_human_readable_list)</title>
-</circle><circle cx="826.3" cy="550.1" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_iter_find_files (tests_test_fileutils_test_iter_find_files)</title>
-</circle><circle cx="904.1" cy="335.3" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_rotate_file_full_rotation (tests_test_fileutils_test_rotate_file_full_rotation)</title>
-</circle><circle cx="689.5" cy="106.0" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: TestMultiReplace.test_substitutions_in_word (tests_test_strutils_testmultireplace_test_substitutions_in_word)</title>
-</circle><circle cx="208.1" cy="190.1" r="12" fill="#10b981" stroke="#111827" stroke-width="2">
-  <title>Selected Test: test_iter_splitlines_preserves_numbers_after_spaces (tests_test_strutils_test_iter_splitlines_preserves_numbers_after_spaces)</title>
-</circle>
-  </g>
-  <!-- Labels -->
-  <g id="labels">
-    <text x="125.5" y="478.8" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_indent_unicode_line_endings</text><text x="277.6" y="542.4" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_rotate_file_full_rotation_no_ext</text><text x="920.0" y="371.9" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_sub_with_list</text><text x="502.9" y="65.3" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_sub_with_compiled_regex</text><text x="736.7" y="548.2" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_rotate_file_no_rotation</text><text x="277.5" y="104.2" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_is_uuid</text><text x="304.3" y="579.6" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_shortcut_function</text><text x="133.6" y="229.9" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_fileperms</text><text x="796.1" y="118.5" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_parse_int_list</text><text x="605.3" y="600.2" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_iter_find_files_pathlike</text><text x="120.0" y="417.2" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_asciify</text><text x="861.3" y="181.8" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_args2sh_sep</text><text x="661.7" y="564.5" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_pluralize_x</text><text x="867.6" y="278.0" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_rotate_file_one_rotation</text><text x="200.8" y="462.8" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_bytes2human</text><text x="389.1" y="590.6" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_substitutions_with_regex_chars</text><text x="865.8" y="230.1" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_strip_ansi</text><text x="565.2" y="92.3" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_simple_substitutions</text><text x="379.3" y="102.7" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_multi_replace_empty_mapping</text><text x="733.7" y="143.0" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_human_readable_list_type_annotations</text><text x="532.8" y="580.4" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_singularize_double_s</text><text x="467.8" y="604.0" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_args2cmd_sep</text><text x="200.4" y="524.2" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_atomicsaver_pathlike</text><text x="275.0" y="145.4" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_roundzip</text><text x="856.4" y="405.1" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_ellipsize</text><text x="405.2" y="64.0" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_human_readable_list</text><text x="80.0" y="375.2" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_indent</text><text x="792.5" y="483.8" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_sub_with_regex</text><text x="884.4" y="453.6" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_format_int_list</text><text x="131.3" y="191.7" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_iter_splitlines_unicode_line_endings</text><text x="471.5" y="182.6" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">human_readable_list</text><text x="826.3" y="534.1" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_iter_find_files</text><text x="904.1" y="319.3" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_rotate_file_full_rotation</text><text x="689.5" y="90.0" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_substitutions_in_word</text><text x="208.1" y="174.1" font-family="system-ui, sans-serif" font-size="11" font-weight="600" fill="#f3f4f6" text-anchor="middle">test_iter_splitlines_preserves_numbers_after_spaces</text>
-  </g>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="-596 -685 1272 1230">
+  <g id="guides"><circle cx="0" cy="0" r="110" class="ring" /><text x="0" y="-110" dy="0.35em" text-anchor="middle" class="ring-label">1</text><circle cx="0" cy="0" r="220" class="ring" /><text x="0" y="-220" dy="0.35em" text-anchor="middle" class="ring-label">2</text><circle cx="0" cy="0" r="330" class="ring" /><text x="0" y="-330" dy="0.35em" text-anchor="middle" class="ring-label">3</text><circle cx="0" cy="0" r="396" class="ring ring-fallback" /></g>
+  <g id="edges"><line x1="0.0" y1="0.0" x2="-107.2" y2="-24.5" class="edge" /><line x1="47.7" y1="99.1" x2="-172.0" y2="137.2" class="edge" /><line x1="0.0" y1="0.0" x2="47.7" y2="99.1" class="edge" /><line x1="47.7" y1="-99.1" x2="95.5" y2="-198.2" class="edge" /><line x1="0.0" y1="0.0" x2="47.7" y2="-99.1" class="edge" /><line x1="214.5" y1="49.0" x2="321.7" y2="-73.4" class="edge" /><line x1="47.7" y1="99.1" x2="214.5" y2="49.0" class="edge" /><line x1="214.5" y1="49.0" x2="258.0" y2="205.8" class="edge" /><line x1="47.7" y1="99.1" x2="0.0" y2="220.0" class="edge" /><line x1="0" y1="0" x2="-171.8" y2="-356.8" class="edge edge-fallback" /></g>
+  <g id="nodes"><circle cx="0.0" cy="0.0" r="24" fill="#eb6834" class="node"><title>Your change: apply_discount (pricing.py:4), the code you changed</title></circle><circle cx="-107.2" cy="-24.5" r="15" fill="#2a78d6" class="node" stroke="#eb6834" stroke-width="5"><title>Test that checks it (this test failed: it caught the bug): test_apply_discount (tests/test_pricing.py:9), 1 step from your change</title></circle><circle cx="-172.0" cy="137.2" r="15" fill="#2a78d6" class="node" stroke="#eb6834" stroke-width="5"><title>Test that checks it (this test failed: it caught the bug): test_cart_total (tests/test_cart.py:14), 2 steps from your change</title></circle><circle cx="47.7" cy="99.1" r="12" fill="#898781" class="node"><title>Code that uses it: Cart.get_total (cart.py:21), 1 step from your change</title></circle><circle cx="95.5" cy="-198.2" r="15" fill="#2a78d6" class="node" stroke="#eb6834" stroke-width="5"><title>Test that checks it (this test failed: it caught the bug): test_get_final_price (tests/test_pricing.py:19), 2 steps from your change</title></circle><circle cx="47.7" cy="-99.1" r="12" fill="#898781" class="node"><title>Code that uses it: get_final_price (pricing.py:16), 1 step from your change</title></circle><circle cx="321.7" cy="-73.4" r="15" fill="#2a78d6" class="node"><title>Test that checks it: test_cart_add_item (tests/test_cart.py:7), 3 steps from your change</title></circle><circle cx="214.5" cy="49.0" r="12" fill="#898781" class="node"><title>Code that uses it: Cart (cart.py:11), 2 steps from your change</title></circle><circle cx="258.0" cy="205.8" r="15" fill="#2a78d6" class="node" stroke="#eb6834" stroke-width="5"><title>Test that checks it (this test failed: it caught the bug): test_checkout_process (tests/test_checkout.py:9), 3 steps from your change</title></circle><circle cx="0.0" cy="220.0" r="12" fill="#898781" class="node"><title>Code that uses it: process_order (checkout.py:13), 2 steps from your change</title></circle><g transform="translate(-171.8,-356.8) rotate(424.3)"><title>tests/test_pricing.py: 1 test(s) run to be safe, because this file imports the code you changed
+tests/test_pricing.py::test_calculate_tax</title><rect x="-330.5" y="-19" width="330.5" height="38" rx="19" class="pill" /><text x="-165.2" dy="0.35em" text-anchor="middle" class="pill-text">test_pricing.py · 1 more test</text></g></g>
+  <g id="labels"><text x="0.0" y="52.0" text-anchor="middle" class="label label-center">apply_discount</text><text transform="translate(-107.2,-24.5) rotate(372.9)" x="-21.0" dy="0.35em" text-anchor="end" class="label">test_apply_discount <tspan class="failed">✓ caught the bug</tspan></text><text transform="translate(-172.0,137.2) rotate(321.4)" x="-21.0" dy="0.35em" text-anchor="end" class="label">test_cart_total <tspan class="failed">✓ caught the bug</tspan></text><text x="47.7" y="135.1" text-anchor="middle" class="label">get_total</text><text transform="translate(95.5,-198.2) rotate(-64.3)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_get_final_price <tspan class="failed">✓ caught the bug</tspan></text><text x="47.7" y="-119.1" text-anchor="middle" class="label">get_final_price</text><text transform="translate(321.7,-73.4) rotate(-12.9)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_cart_add_item</text><text x="214.5" y="85.0" text-anchor="middle" class="label">Cart</text><text transform="translate(258.0,205.8) rotate(38.6)" x="21.0" dy="0.35em" text-anchor="start" class="label">test_checkout_process <tspan class="failed">✓ caught the bug</tspan></text><text transform="translate(0.0,220.0) rotate(90.0)" x="18.0" dy="0.35em" text-anchor="start" class="label">process_order</text></g>
 </svg>
   </div>
+  <div class="note">Read it from the middle out. Each ring is one step further from your change: ring 1 uses your code directly, ring 2 uses something on ring 1, and so on (up to 3). The dashed outer ring holds test files RIPPLE also runs to be safe, because they import the file you changed. Hover anything for details.</div>
 </body>
 </html>

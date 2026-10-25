@@ -48,7 +48,7 @@ echo "ripple exit code: $EXIT_CODE (1 = selected tests caught a regression)"
 
 echo ""
 echo "[Step 3] Generating ripple map: ripple_map.html"
-"$PY" -m ripple.cli map --repo "$TARGET_DIR" --out ripple_map.html
+"$PY" -m ripple.cli map --repo "$TARGET_DIR" --report ripple_report.json --out ripple_map.html
 if command -v explorer.exe &> /dev/null; then
     explorer.exe ripple_map.html 2>/dev/null || true   # WSL: open in the Windows browser
 elif command -v xdg-open &> /dev/null; then
@@ -56,10 +56,18 @@ elif command -v xdg-open &> /dev/null; then
 elif command -v open &> /dev/null; then
     open ripple_map.html 2>/dev/null || true
 fi
+# Keep this library's demo for the results page (results.html has one tab per library).
+mkdir -p "eval/results/$TARGET"
+cp ripple_report.json "eval/results/$TARGET/demo_report.json"
+cp ripple_map.html "eval/results/$TARGET/demo_map.html"
 
 echo ""
 echo "[Step 4] Restoring target"
 restore
 trap - EXIT
 git -C "$TARGET_DIR" status --short --untracked-files=no
+
+echo ""
+echo "[Step 5] Updating results page: results.html"
+"$PY" scripts/build_results.py
 echo "✅ Demo complete. Target restored."
