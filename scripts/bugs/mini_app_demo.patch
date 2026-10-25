@@ -1,0 +1,13 @@
+diff --git a/pricing.py b/pricing.py
+index 979f4c3..7e3e365 100644
+--- a/pricing.py
++++ b/pricing.py
+@@ -5,7 +5,7 @@ def apply_discount(price: float, discount: float) -> float:
+     """Apply percentage discount to price."""
+     if discount < 0 or discount > 1:
+         raise ValueError("Discount must be between 0 and 1")
+-    return price * (1.0 - discount)
++    return price * (1.0 + discount)
+ 
+ 
+ def calculate_tax(price: float, tax_rate: float = 0.1) -> float:

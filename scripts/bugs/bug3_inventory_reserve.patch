@@ -1,5 +1,0 @@
---- a/inventory.py
-+++ b/inventory.py
-@@ -14,1 +14,1 @@
--    if available >= quantity:
-+    if available > quantity:
