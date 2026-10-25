@@ -50,5 +50,6 @@ for t in boltons click mini_app; do
     echo "Extracting Graphify code graph for targets/$t..."
     (cd "targets/$t" && graphify extract . --code-only)
 done
+bash scripts/graph_libs.sh   # browsable code maps for the dashboard
 
 echo "✅ Target setup complete."

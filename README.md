@@ -150,7 +150,7 @@ Reproduce: `N=60 bash scripts/run_eval.sh boltons` (also `click`, `mini_app`). F
 - **Graph Schema Documentation**: [docs/graph_schema.md](docs/graph_schema.md)
 - **Repo Graph**: RIPPLE's own Graphify graph is in `graphify-out/` (`graph.html`, `graph.json`, `GRAPH_REPORT.md`), regenerated after the final commit with `bash scripts/graph.sh` (also makes `graph.html` work offline).
 - **Shared in Discord**: yes, [link to our post](TODO-discord-message-link)
-- **Target graphs**: `scripts/setup_target.sh` runs `graphify extract . --code-only` in each target; RIPPLE reads those `graph.json` files.
+- **Target graphs**: `scripts/setup_target.sh` runs `graphify extract . --code-only` in each target; RIPPLE reads those `graph.json` files. `bash scripts/graph_libs.sh` builds a browsable, offline `graph.html` for each target (opened from the dashboard's library picker).
 
 ---
 
