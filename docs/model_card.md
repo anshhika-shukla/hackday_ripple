@@ -6,7 +6,8 @@
 - **License**: Apache-2.0
 - **Runtime Environment**: Local Ollama runtime (`http://localhost:11434`)
 - **Quantization**: 4-bit (`Q4_K_M` standard Ollama package)
-- **External Network Access**: **NONE**. Fully offline, validated with Wi-Fi disabled.
+- **Parameters**: 4.0B (`ollama show qwen3:4b-instruct`)
+- **External Network Access**: none at runtime (Ollama on localhost). Wi-Fi-off run: not yet verified.
 
 ## 2. Intended Use & Role in RIPPLE
 - **Change Triage**: Classify git diff hunks into semantic categories (`behavior`, `signature`, `refactor`, `docs_or_format`).
@@ -32,6 +33,7 @@ The LLM operates within strict deterministic guardrails:
 5. **G5 (Risk-Based Expansion)**: High risk ($\ge 4$) triggers graph neighborhood expansion ($D+1$) and import closure.
 
 ## 5. Performance Metrics
-- **Median Call Latency**: ~1.5s - 8s (hardware dependent)
-- **Mean Tokens/Second**: ~12 - 45 tok/s (CPU / Metal / CUDA)
-- **Schema Adherence**: > 95% on first attempt; 100% with retry / fallback.
+Measured on an NVIDIA RTX 4050 Laptop GPU (6 GB), WSL2 Ubuntu 24.04, Ollama 0.31.1, `qwen3:4b-instruct` fully on GPU:
+- **Tokens/second**: 70.8 (boltons eval, 3 runs), 67.8 (Click eval, 3 runs); ~16 on the first cold call (the demo preloads the model)
+- **Triage + rank latency**: ~0.8–1.2 s per change (uncached)
+- **Schema adherence**: live tests (`pytest -m live`, 3 sample diffs) pass; fallback rate over the eval is not recorded yet

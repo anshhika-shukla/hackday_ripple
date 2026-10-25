@@ -11,11 +11,11 @@ git diff -> diffmap.py (changed functions) -> Graphify graph.json -> impact.py (
 eval/: seeded mutants -> ground truth -> score strategies A/B/C
 ```
 
-## 2. Target Repository
-- **Target**: `pallets/click`
-- **Pinned Commit**: `8.1.7` (e.g. tag `8.1.7` or commit `8a452ef34efbbd7bfa5f7ea1459a0f443b811802`)
-- **Suite Size**: > 150 unit tests across `tests/`
-- **Execution Time**: ~10-15s full suite
+## 2. Target Repositories
+- **Main target**: `mahmoud/boltons`, tag `26.2.0`: 519 tests, demo and headline evaluation.
+- **Limitation case**: `pallets/click`, tag `8.1.7`: 611 tests, dynamic dispatch the static graph cannot follow.
+- **Toy target**: `tests/fixtures/mini_app` (8 tests).
+- All are cloned into `targets/` (git-ignored) by `scripts/setup_target.sh`, each with its own Graphify graph.
 
 ## 3. Data Flow & Core Modules
 1. **diffmap.py**:

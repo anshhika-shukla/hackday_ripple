@@ -208,7 +208,7 @@
           <ul>
             <li><strong>Model:</strong> Qwen3 (4B / 1.7B) via Ollama on localhost.</li>
             <li><strong>Graphify:</strong> Code-only extraction (tree-sitter, zero API keys).</li>
-            <li><strong>Air-Gapped:</strong> Validated with Wi-Fi switched off. Zero CDN.</li>
+            <li><strong>Air-Gapped:</strong> Local inference only (Ollama on localhost). Zero CDN.</li>
           </ul>
         </div>
       </div>
@@ -233,32 +233,32 @@
           <tbody>
             <tr>
               <td><strong>A: Filename Heuristic</strong></td>
-              <td class="num">68.2%</td>
-              <td class="num">18.5%</td>
-              <td class="num">34.1%</td>
-              <td class="num">45.5%</td>
-              <td class="num">61.4%</td>
+              <td class="num">93.5%</td>
+              <td class="num">5.4%</td>
+              <td class="num">39.1%</td>
+              <td class="num">50.0%</td>
+              <td class="num">63.0%</td>
             </tr>
             <tr>
               <td><strong>B: Graphify Graph Only</strong></td>
-              <td class="num">94.7%</td>
-              <td class="num">12.3%</td>
-              <td class="num">58.3%</td>
-              <td class="num">72.2%</td>
-              <td class="num">91.7%</td>
+              <td class="num">82.6%</td>
+              <td class="num">1.5%</td>
+              <td class="num">69.6%</td>
+              <td class="num">78.3%</td>
+              <td class="num">80.4%</td>
             </tr>
             <tr class="highlight-row">
-              <td><strong>C: Graph + Local LLM (RIPPLE)</strong></td>
-              <td class="num" style="color: #38bdf8;">94.7%</td>
-              <td class="num" style="color: #38bdf8;">12.3%</td>
-              <td class="num" style="color: #38bdf8;">66.7%</td>
-              <td class="num" style="color: #38bdf8;">83.3%</td>
-              <td class="num" style="color: #38bdf8;">94.7%</td>
+              <td><strong>C: Graph + import closure + Local LLM</strong></td>
+              <td class="num" style="color: #38bdf8;">95.7%</td>
+              <td class="num" style="color: #38bdf8;">8.3%</td>
+              <td class="num" style="color: #38bdf8;">67.4%</td>
+              <td class="num" style="color: #38bdf8;">78.3%</td>
+              <td class="num" style="color: #38bdf8;">80.4%</td>
             </tr>
           </tbody>
         </table>
         <p style="margin-top: 16px; font-size: 15px; color: #94a3b8;">
-          ⚡ <strong>Execution Speedup:</strong> Full suite ~14.2s vs RIPPLE ~1.8s (<strong>~72% net time saved</strong>). Local LLM provides clear ranking lift (+11.1% on recall@5).
+          ⚡ <strong>Measured on boltons 26.2.0 (519 tests, 60 seeded bugs, 46 caught by the suite; 3 runs of C identical).</strong> SAFE mode runs 8.3% of tests and catches 95.7%. LLM ranking adds no lift here; the model's job is the change summary and risk rating. Limitation: on Click (dynamic dispatch) the graph alone catches 12%.
         </p>
       </div>
     </div>

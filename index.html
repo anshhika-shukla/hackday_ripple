@@ -244,11 +244,11 @@
       </div>
       <div class="status-item">
         <span>Inference Mode</span>
-        <span class="pill pill-green">100% Local & Offline (Wi-Fi Off Verified)</span>
+        <span class="pill pill-green">Local inference via Ollama (Wi-Fi-off run not yet verified)</span>
       </div>
       <div class="status-item">
         <span>Test Suite Status</span>
-        <span class="pill pill-green">41 / 41 Acceptance Tests Defined</span>
+        <span class="pill pill-green">43 tests (41 offline + 2 live model)</span>
       </div>
     </div>
 
@@ -257,9 +257,9 @@
       <div class="status-title">
         <span>💻</span> Quick Terminal Commands
       </div>
-      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Run tests and demo in PowerShell:</p>
-      <pre>powershell -ExecutionPolicy Bypass -File scripts\demo.ps1</pre>
-      <pre>powershell -ExecutionPolicy Bypass -File scripts\run_all_tests.ps1</pre>
+      <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Run tests and demo in a Linux / WSL terminal:</p>
+      <pre>bash scripts/demo.sh</pre>
+      <pre>.venv/bin/python -m pytest -m "not live"</pre>
     </div>
   </div>
 
