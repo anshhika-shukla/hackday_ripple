@@ -36,6 +36,10 @@ targets/
 
 # Note: graphify-out/ is intentionally NOT ignored per RIPPLE spec
 ripple_report.json
+ripple_map.html
+
+# Your own checks (scripts/check.sh), shown on the dashboard as "Your latest check"
+runs/
 
 # Graphify local cache/state (graph.json, graph.html, GRAPH_REPORT.md are committed)
 graphify-out/cache/

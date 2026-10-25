@@ -40,26 +40,25 @@ git -C "$TARGET_DIR" --no-pager diff
 echo ""
 echo "[Step 2] ripple check --run --baseline --no-cache (select, ask the local LLM, run, compare to full suite)"
 echo "----------------------------------------------------------------------"
+# Each library keeps its own demo report and map (shown per library on the dashboard and results page).
+OUT="eval/results/$TARGET"
+mkdir -p "$OUT"
 set +e
-"$PY" -m ripple.cli check --repo "$TARGET_DIR" --run --baseline --no-cache --json ripple_report.json
+"$PY" -m ripple.cli check --repo "$TARGET_DIR" --run --baseline --no-cache --json "$OUT/demo_report.json"
 EXIT_CODE=$?
 set -e
 echo "ripple exit code: $EXIT_CODE (1 = selected tests caught a regression)"
 
 echo ""
-echo "[Step 3] Generating ripple map: ripple_map.html"
-"$PY" -m ripple.cli map --repo "$TARGET_DIR" --report ripple_report.json --out ripple_map.html
+echo "[Step 3] Generating impact chart: $OUT/demo_map.html"
+"$PY" -m ripple.cli map --repo "$TARGET_DIR" --report "$OUT/demo_report.json" --out "$OUT/demo_map.html"
 if command -v explorer.exe &> /dev/null; then
-    explorer.exe ripple_map.html 2>/dev/null || true   # WSL: open in the Windows browser
+    explorer.exe "$(wslpath -w "$OUT/demo_map.html")" 2>/dev/null || true   # WSL: open in the Windows browser
 elif command -v xdg-open &> /dev/null; then
-    xdg-open ripple_map.html 2>/dev/null || true
+    xdg-open "$OUT/demo_map.html" 2>/dev/null || true
 elif command -v open &> /dev/null; then
-    open ripple_map.html 2>/dev/null || true
+    open "$OUT/demo_map.html" 2>/dev/null || true
 fi
-# Keep this library's demo for the results page (results.html has one tab per library).
-mkdir -p "eval/results/$TARGET"
-cp ripple_report.json "eval/results/$TARGET/demo_report.json"
-cp ripple_map.html "eval/results/$TARGET/demo_map.html"
 
 echo ""
 echo "[Step 4] Restoring target"
