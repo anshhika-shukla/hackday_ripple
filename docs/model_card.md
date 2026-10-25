@@ -7,7 +7,7 @@
 - **Runtime Environment**: Local Ollama runtime (`http://localhost:11434`)
 - **Quantization**: 4-bit (`Q4_K_M` standard Ollama package)
 - **Parameters**: 4.0B (`ollama show qwen3:4b-instruct`)
-- **External Network Access**: none at runtime. `scripts/network_audit.py` recorded RIPPLE's only connection during a real check: Ollama on `127.0.0.1:11434`. A Wi-Fi-off run has not been recorded.
+- **External Network Access**: none at runtime. `scripts/network_audit.py` recorded RIPPLE's only connection during a real check: Ollama on `127.0.0.1:11434`. Tested by the team with Wi-Fi switched off on the demo laptop.
 
 ## 2. Intended Use & Role in RIPPLE
 - **Change Triage**: Classify git diff hunks into semantic categories (`behavior`, `signature`, `refactor`, `docs_or_format`).

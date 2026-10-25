@@ -54,7 +54,7 @@ eval/: seeded mutants -> ground truth -> score strategies A/B/C
 - **License**: Apache-2.0
 - **Runtime**: Local Ollama runtime (`http://localhost:11434`)
 - **Quantization**: 4-bit (`Q4_K_M`)
-- **External APIs / network**: none at run time. Measured with `scripts/network_audit.py` during a real `ripple check`: RIPPLE's only network connection was to Ollama on `127.0.0.1:11434`. Internet is needed once for setup (pip, `ollama pull`, cloning targets). A run with Wi-Fi switched off has not been recorded.
+- **External APIs / network**: none at run time. Measured with `scripts/network_audit.py` during a real `ripple check`: RIPPLE's only network connection was to Ollama on `127.0.0.1:11434`. Internet is needed once for setup (pip, `ollama pull`, cloning targets). Tested by the team with Wi-Fi switched off on the demo laptop, and shown live in the demo.
 - **Hardware tested**: Intel Core i7-13700HX, 15.7 GB RAM (7.6 GB visible to WSL2), NVIDIA RTX 4050 Laptop GPU 6 GB, Windows 11 + WSL2 Ubuntu 24.04
 - **Parameters**: 4.0B (`ollama show qwen3:4b-instruct`), context 4096 tokens as configured, temperature 0
 - **Measured speed**: 43.5–73 tokens/sec warm across our runs on the RTX 4050 Laptop GPU (6 GB), Ollama 0.31.1; about 16 tokens/sec on a cold first call
@@ -178,7 +178,9 @@ Reproduce: `N=60 bash scripts/run_eval.sh boltons` (also `click`, `mini_app`). F
 - **Core Dependency**: RIPPLE directly uses Graphify's static code graph (`graphify extract . --code-only`) to discover call relations, class hierarchies, and import dependencies.
 - **Graph Schema Documentation**: [docs/graph_schema.md](docs/graph_schema.md)
 - **Repo Graph**: RIPPLE's own Graphify graph is in `graphify-out/` (`graph.html`, `graph.json`, `GRAPH_REPORT.md`), regenerated with `bash scripts/graph.sh` (also makes `graph.html` work offline).
-- **Shared in Discord**: yes, [link to our post](TODO-discord-message-link)
+- **Shared in Discord**: yes, [our graph image in the Graphify Discord](https://media.discordapp.net/attachments/1562682797460693075/1563829562549342258/IMG-20261025-WA0025.jpg?ex=6adf0d46&is=6addbbc6&hm=e94b33b3f845808b3f4879188ff488c7869395c8b8ad7c42d7d49a6843c41d1e&=&format=webp) (Discord image links expire, so a copy is kept here):
+
+  ![RIPPLE's Graphify graph as shared in Discord](docs/screenshots/graphify_graph_discord.webp)
 - **Target graphs**: `scripts/setup_target.sh` runs `graphify extract . --code-only` in each target; RIPPLE reads those `graph.json` files. `bash scripts/graph_libs.sh` builds a browsable, offline `graph.html` for each target (opened from the dashboard's library picker).
 
 ---

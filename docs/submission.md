@@ -17,7 +17,7 @@ Every number here comes from a real run; sources are linked in the README and [d
 | **Repository** | https://github.com/anshhika-shukla/ripple |
 | **Licence** | MIT |
 | **Model information** | Qwen3 4B Instruct (`qwen3:4b-instruct`), 4.0B parameters, Apache-2.0, Ollama 0.31.1 on localhost, Q4_K_M 4-bit, NVIDIA RTX 4050 Laptop GPU (6 GB) + Intel Core i7-13700HX, 15.7 GB RAM; no external APIs at run time. |
-| **Graphify integration** | RIPPLE reads Graphify's `graph.json` (`graphify extract . --code-only`) and walks its call/reference/inheritance edges backwards from the change to the tests. RIPPLE's own graph is in `graphify-out/` and shared in the Graphify Discord (link in the README). |
+| **Graphify integration** | RIPPLE reads Graphify's `graph.json` (`graphify extract . --code-only`) and walks its call/reference/inheritance edges backwards from the change to the tests. RIPPLE's own graph is in `graphify-out/` and shared in the Graphify Discord (link and image in the README, section 6). |
 
 ## 2. Model details
 
@@ -31,7 +31,7 @@ Every number here comes from a real run; sources are linked in the README and [d
 | Settings | temperature 0, context 4096 tokens, max 200 output tokens, thinking off |
 | Hardware | NVIDIA RTX 4050 Laptop GPU 6 GB (model fully on GPU), Intel Core i7-13700HX, 15.7 GB RAM (7.6 GB given to WSL2), Windows 11 + WSL2 Ubuntu 24.04 |
 | Speed | 43.5–73 tokens/sec warm across our runs; ~16 tokens/sec on a cold first call |
-| External APIs | None at run time. `scripts/network_audit.py` recorded RIPPLE's only network connection during a real check: Ollama on `127.0.0.1:11434`. Internet is needed once for setup. A Wi-Fi-off run has not been recorded. |
+| External APIs | None at run time. `scripts/network_audit.py` recorded RIPPLE's only network connection during a real check: Ollama on `127.0.0.1:11434`. Internet is needed once for setup. Tested with Wi-Fi switched off on the demo laptop. |
 | What the model does | Classifies the change, rates risk 1–5, writes a one-line summary, and re-orders the chosen tests. It cannot remove tests (guardrail G1); invalid output falls back to graph-only ranking (G4). |
 
 ## 3. Results to include
